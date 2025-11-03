@@ -1,0 +1,17 @@
+Django
+djangorestframework
+psycopg2-binary
+gunicorn
+python-dotenv
+dj-database-url
+redis
+celery
+django-celery-beat
+openai
+whitenoise
+django-cors-headers
+requests
+openai
+zai-sdk
+zai
+django-cors-headers
