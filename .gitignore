@@ -1,0 +1,43 @@
+# --- Python / Django ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.log
+db.sqlite3
+.env
+.env.*
+.envrc
+media/
+staticfiles/
+*.pid
+
+# --- Sanal ortamlar ---
+env/
+venv/
+.venv/
+
+# --- Docker ---
+*.pid
+*.seed
+*.bak
+*.backup
+*.tar
+*.gz
+
+# --- Node / React ---
+node_modules/
+dist/
+build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.map
+
+# --- IDE / Sistem ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
