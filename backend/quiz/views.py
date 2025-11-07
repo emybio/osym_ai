@@ -21,6 +21,23 @@ def generate_question(request):
                 status=status.HTTP_502_BAD_GATEWAY
             )
 
+        # Generate and save solution immediately
+        try:
+            solution, solution_error = question_service.explain_question(
+                question.id,
+                question.source
+            )
+
+            if solution and not solution_error:
+                # Update the question with the generated solution
+                question.rubric = solution
+                question.save()
+                logger.info(f"Solution generated and saved for question {question.id}")
+            else:
+                logger.warning(f"Failed to generate solution for question {question.id}: {solution_error}")
+        except Exception as e:
+            logger.error(f"Error generating solution for question {question.id}: {e}")
+
         serializer = QuestionSerializer(question)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -37,7 +54,7 @@ def explain(request, pk: int):
     try:
         explanation, error = question_service.explain_question(
             pk,
-            request.data.get("provider", "openai")
+            request.data.get("provider")  # Boş olursa sorunun kendi source'unu kullanır
         )
 
         if error:
@@ -52,6 +69,20 @@ def explain(request, pk: int):
         logger.error(f"Unexpected error in explain: {e}")
         return Response(
             {"error": "Beklenmedik bir hata oluştu", "detail": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@api_view(["GET"])
+def question_list(request):
+    """List all questions in the database"""
+    try:
+        questions = Question.objects.all().order_by('-created_at')
+        serializer = QuestionSerializer(questions, many=True)
+        return Response(serializer.data)
+    except Exception as e:
+        logger.error(f"Error getting question list: {e}")
+        return Response(
+            {"error": "Sorular listelenemedi", "detail": str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 

@@ -61,6 +61,10 @@ class ApiClient {
   }
 
   // Question API methods
+  async getQuestions() {
+    return this.request('/api/v1/questions/');
+  }
+
   async generateQuestion(params) {
     return this.request('/api/v1/questions/generate/', {
       method: 'POST',
@@ -73,11 +77,11 @@ class ApiClient {
     });
   }
 
-  async explainQuestion(questionId, provider = 'openai') {
+  async explainQuestion(questionId, provider = null) {
     return this.request(`/api/v1/questions/${questionId}/explain/`, {
       method: 'POST',
       body: JSON.stringify({
-        provider: provider,
+        provider: provider,  // Backend'de null olursa sorunun source'unu kullanır
       }),
     });
   }
@@ -106,8 +110,9 @@ export const apiClient = new ApiClient();
 
 // Export convenience methods
 export const questionService = {
+  getAll: () => apiClient.getQuestions(),
   generate: (params) => apiClient.generateQuestion(params),
-  explain: (questionId) => apiClient.explainQuestion(questionId),
+  explain: (questionId, provider = null) => apiClient.explainQuestion(questionId, provider),
 };
 
 export const userService = {

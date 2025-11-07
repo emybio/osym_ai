@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { id: "home", label: "Anasayfa", icon: Home },
   { id: "dashboard", label: "Öğrenci Paneli", icon: BarChart3 },
   { id: "exams", label: "AI Sınavı", icon: FileText },
+  { id: "questions", label: "Sorular", icon: BookOpen },
   {
     id: "progress",
     label: "İlerleme",

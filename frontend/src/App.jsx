@@ -8,34 +8,87 @@ import {
 
 // Components
 import Sidebar from './components/Sidebar';
+import LandingPage from './components/LandingPage';
 import HomePage from './components/HomePage';
 import DashboardPage from './components/DashboardPage';
 import ExamPage from './components/ExamPage';
 import ProgressPage from './components/ProgressPage';
 import SubjectsPage from './components/SubjectsPage';
+import QuestionsPage from './components/QuestionsPage';
+import AssessmentPage from './components/AssessmentPage';
+import AnimatedTransition from './components/AnimatedTransition';
+import LoadingOverlay from './components/LoadingOverlay';
 
 // Hooks
 import { useExamState } from './hooks/useExamState';
 
 const App = () => {
   // Navigation state
-  const [currentPage, setCurrentPage] = useState('home');
+  const [currentPage, setCurrentPage] = useState('landing');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [expandedSubmenu, setExpandedSubmenu] = useState(null);
+  const [showLanding, setShowLanding] = useState(true);
+  const [isPageLoading, setIsPageLoading] = useState(false);
 
   // Navigation handler with submenu reset
   const handleNavigate = (page) => {
-    setCurrentPage(page);
-    // Reset submenu when navigating to main items
-    if (!['progress-overview', 'subjects'].includes(page)) {
-      setExpandedSubmenu(null);
-    }
-    setMobileMenuOpen(false);
+    setIsPageLoading(true);
+
+    setTimeout(() => {
+      setCurrentPage(page);
+      // If navigating to main app, hide landing page
+      if (['dashboard', 'exams', 'progress', 'subjects', 'questions'].includes(page)) {
+        setShowLanding(false);
+      }
+      // Reset submenu when navigating to main items
+      if (!['progress-overview', 'subjects'].includes(page)) {
+        setExpandedSubmenu(null);
+      }
+      setMobileMenuOpen(false);
+      setIsPageLoading(false);
+    }, 300);
+  };
+
+  // Landing page handlers
+  const handleStartDemo = () => {
+    setShowLanding(false);
+    handleNavigate('home');
+  };
+
+  const handleStartAssessment = () => {
+    setShowLanding(true);
+    setCurrentPage('assessment');
+  };
+
+  const handleAssessmentComplete = (results) => {
+    console.log('Assessment completed:', results);
+    handleNavigate('home');
   };
 
   // Exam state
   const examState = useExamState();
 
+  // Show landing page for first-time visitors
+  if (showLanding && currentPage === 'landing') {
+    return <AnimatedTransition><LandingPage onStartDemo={handleStartDemo} onStartAssessment={handleStartAssessment} /></AnimatedTransition>;
+  }
+
+  // Show assessment page
+  if (currentPage === 'assessment') {
+    return (
+      <AnimatedTransition>
+        <AssessmentPage
+          onComplete={handleAssessmentComplete}
+          onBack={() => {
+            setShowLanding(true);
+            setCurrentPage('landing');
+          }}
+        />
+      </AnimatedTransition>
+    );
+  }
+
+  // Main app layout
   return (
     <div className="min-h-screen bg-gray-50 lg:pl-64">
       <Sidebar
@@ -81,8 +134,16 @@ const App = () => {
           {currentPage === 'progress' && <ProgressPage />}
           {currentPage === 'progress-overview' && <ProgressPage />}
           {currentPage === 'subjects' && <SubjectsPage />}
+          {currentPage === 'questions' && <QuestionsPage />}
         </main>
       </div>
+
+      {/* Global Loading Overlay */}
+      <LoadingOverlay
+        show={isPageLoading}
+        text="Yükleniyor..."
+        size="medium"
+      />
     </div>
   );
 };

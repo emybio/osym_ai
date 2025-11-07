@@ -30,8 +30,12 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-osym}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-osym}
-      POSTGRES_HOST: db
-      POSTGRES_PORT: "5432"
+      POSTGRES_HOST: ${POSTGRES_HOST:-db}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      IGNORE_SSL: ${IGNORE_SSL:-True}
+      NODE_TLS_REJECT_UNAUTHORIZED: ${NODE_TLS_REJECT_UNAUTHORIZED:-0}
+      ZAI_MODEL: ${ZAI_MODEL:-glm-4.6}
       DATABASE_URL: ${DATABASE_URL}
     volumes:
       - ./backend:/app # backend kodları canlı izlenir

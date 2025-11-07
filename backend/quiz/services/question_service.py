@@ -68,19 +68,35 @@ class QuestionService:
             return None, f"Beklenmedik hata: {str(e)}"
 
     @staticmethod
-    def explain_question(question_id: int, provider: str = "openai") -> tuple[str, Optional[str]]:
-        """Generate explanation for a question"""
+    def explain_question(question_id: int, provider: str = None, force_generate: bool = False) -> tuple[str, Optional[str]]:
+        """Get explanation for a question"""
         try:
             question = Question.objects.get(pk=question_id)
         except Question.DoesNotExist:
             return None, "Soru bulunamadı"
 
+        # Eğer zorla generate et değilse ve veritabanında çözüm varsa onu kullan
+        if not force_generate and question.rubric and len(question.rubric.strip()) > 200:
+            logger.info(f"Using saved solution for question {question_id}")
+            return question.rubric, None
+
+        # Eğer provider belirtilmemişse, sorunun kendi provider'ını kullan
+        if not provider:
+            provider = question.source or "openai"
+
         try:
+            logger.info(f"Generating new solution for question {question_id} using {provider}")
             explanation = ai_service.explain_question(
                 question.stem,
                 question.choices,
                 provider
             )
+
+            # Yeni açıklamayı veritabanına kaydet
+            question.rubric = explanation
+            question.save()
+            logger.info(f"Generated and saved solution for question {question_id}")
+
             return explanation, None
         except AIProviderError as e:
             logger.error(f"AI provider error while explaining question: {e}")

@@ -59,7 +59,9 @@ export const useExamState = () => {
 
     try {
       console.log('Requesting explanation for question:', question.id);
-      const data = await questionService.explain(question.id, selectedApi);
+      console.log('Question source:', question.source);
+      // Provider gönderme, backend sorunun source'unu kullansın
+      const data = await questionService.explain(question.id);
       console.log('Explanation received:', data);
       setExplanation(data.explanation || 'Açıklama alınamadı.');
     } catch (error) {
@@ -67,12 +69,12 @@ export const useExamState = () => {
       if (error instanceof ApiError) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage('Çözüm alınırken beklenmedik bir hata oluştu.');
+        setErrorMessage('Çözüm alınirken beklenmedik bir hata oluştu.');
       }
     } finally {
       setLoadingExplanation(false);
     }
-  }, [question, selectedApi]);
+  }, [question]);
 
   const resetExamState = useCallback(() => {
     console.log('=== RESET EXAM STATE CALLED ===');

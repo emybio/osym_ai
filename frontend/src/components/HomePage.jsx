@@ -1,14 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Award,
   BarChart3,
   Brain,
   Clock,
   FileText,
+  Loader2,
 } from 'lucide-react';
 import { STUDENT_STATS, AI_RECOMMENDATIONS } from '../constants';
+import LoadingSpinner from './LoadingSpinner';
 
-const HomePage = ({ onStartExam }) => (
+const HomePage = ({ onStartExam }) => {
+  const [isStarting, setIsStarting] = useState(false);
+
+  const handleStartExam = async () => {
+    setIsStarting(true);
+    await onStartExam();
+    setIsStarting(false);
+  };
+
+  return (
   <div className="grid gap-6 lg:grid-cols-3">
     <div className="lg:col-span-2 space-y-6">
       <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-8 text-white shadow-lg">
@@ -21,10 +32,18 @@ const HomePage = ({ onStartExam }) => (
             </p>
           </div>
           <button
-            onClick={onStartExam}
-            className="px-6 py-3 bg-white text-blue-700 font-semibold rounded-xl shadow hover:bg-blue-50 transition-colors"
+            onClick={handleStartExam}
+            disabled={isStarting}
+            className="px-6 py-3 bg-white text-blue-700 font-semibold rounded-xl shadow hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            AI Sorusu Oluştur
+            {isStarting ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Hazırlanıyor...
+              </>
+            ) : (
+              'AI Sorusu Oluştur'
+            )}
           </button>
         </div>
       </div>
@@ -91,6 +110,7 @@ const HomePage = ({ onStartExam }) => (
       </div>
     </div>
   </div>
-);
+  );
+};
 
 export default HomePage;

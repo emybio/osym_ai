@@ -1,4 +1,12 @@
 {
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "f128c53a50a44dbd80fdfca30ebd42ea.EtUzdlTz35ose1t3",
+    "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+    "API_TIMEOUT_MS": "3000000",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "GLM-4.6",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "GLM-4.6",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "GLM-4.5-Air"
+  },
   "permissions": {
     "allow": [
       "Bash(docker-compose exec:*)",
@@ -20,7 +28,9 @@
       "Bash(python manage.py migrate:*)",
       "Bash(python3:*)",
       "Bash(pip3 install:*)",
-      "Bash(docker run:*)"
+      "Bash(docker run:*)",
+      "Bash(npm run build)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
