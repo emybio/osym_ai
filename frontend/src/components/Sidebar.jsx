@@ -9,7 +9,14 @@ import {
   FileText,
   Home,
   TrendingUp,
+  Shield,
+  Upload,
+  LogOut,
+  PieChart,
+  Database,
+  Beaker,
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const NAV_ITEMS = [
   { id: "home", label: "Anasayfa", icon: Home },
@@ -25,13 +32,19 @@ const NAV_ITEMS = [
       { id: "subjects", label: "Dersler" }
     ]
   },
+  { id: "analytics", label: "Analytics", icon: PieChart },
+  { id: "database", label: "Veritabanı", icon: Database },
+  { id: "ab_testing", label: "A/B Testing", icon: Beaker },
 ];
 
-const Sidebar = ({ currentPage, onNavigate, mobileMenuOpen, onToggleMobile, expandedSubmenu, onToggleSubmenu }) => (
-  <aside
-    className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 flex flex-col transform transition-transform duration-300 ease-in-out ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-      }`}
-  >
+const Sidebar = ({ currentPage, onNavigate, mobileMenuOpen, onToggleMobile, expandedSubmenu, onToggleSubmenu, isAuthenticated, isAdmin }) => {
+  const { logout, user } = useAuth();
+
+  return (
+    <aside
+      className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 flex flex-col transform transition-transform duration-300 ease-in-out ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
+    >
     <div className="p-4 border-b border-gray-200">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center text-white font-bold">
@@ -103,6 +116,56 @@ const Sidebar = ({ currentPage, onNavigate, mobileMenuOpen, onToggleMobile, expa
         </div>
       </div>
 
+      {/* Admin Section */}
+      {isAuthenticated && isAdmin && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase mb-3">Yönetim</p>
+          <div className="space-y-1.5">
+            <button
+              onClick={() => {
+                onNavigate('upload');
+                if (mobileMenuOpen) onToggleMobile(false);
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                currentPage === 'upload'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <Upload className="w-4 h-4" />
+              <span className="flex-1 text-left">PDF Yükle</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      
+      <div>
+        <p className="text-xs font-semibold text-gray-500 uppercase mb-3">Hesap</p>
+        <div className="space-y-1.5">
+          {isAuthenticated && (
+            <>
+              <div className="px-4 py-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-green-600" />
+                  <span>Admin olarak giriş yapıldı</span>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  logout();
+                  if (mobileMenuOpen) onToggleMobile(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="flex-1 text-left">Çıkış Yap</span>
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
       <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl">
         <div className="flex items-center gap-3 mb-3">
           <Brain className="w-10 h-10 text-blue-600" />
@@ -118,17 +181,30 @@ const Sidebar = ({ currentPage, onNavigate, mobileMenuOpen, onToggleMobile, expa
     </nav>
 
     <div className="p-4 border-t border-gray-200">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-          <User className="w-5 h-5 text-gray-500" />
+      {isAuthenticated && user ? (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+            <Shield className="w-5 h-5 text-green-600" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-900">{user.username}</p>
+            <p className="text-xs text-green-600">Yönetici</p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm font-medium text-gray-900">Zeynep Arslan</p>
-          <p className="text-xs text-gray-500">TYT Adayı</p>
+      ) : (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+            <User className="w-5 h-5 text-gray-500" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-900">Zeynep Arslan</p>
+            <p className="text-xs text-gray-500">TYT Adayı</p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   </aside>
-);
+  );
+};
 
 export default Sidebar;

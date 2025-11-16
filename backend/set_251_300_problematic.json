@@ -1,0 +1,72 @@
+[
+  {
+    "id": "GEO-DB6A90C4",
+    "subject": "Geometri",
+    "question": "\"TABAN\" geometrik sekli ile ilgili temel soru 11.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-DE7FF77D",
+    "subject": "Geometri",
+    "question": "\"CIZGI\" geometrik sekli ile ilgili temel soru 42.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-DF244695",
+    "subject": "Geometri",
+    "question": "\"YUKSEKLIK\" geometrik sekli ile ilgili temel soru 36.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-F46F248A",
+    "subject": "Geometri",
+    "question": "\"TABAN\" geometrik sekli ile ilgili temel soru 37.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-F7B15083",
+    "subject": "Geometri",
+    "question": "\"DENK\" geometrik sekli ile ilgili temel soru 21.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-FCCB28FB",
+    "subject": "Geometri",
+    "question": "\"DENK\" geometrik sekli ile ilgili temel soru 47.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-FDA79891",
+    "subject": "Geometri",
+    "question": "\"PRIZMA\" geometrik sekli ile ilgili temel soru 12.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  }
+]

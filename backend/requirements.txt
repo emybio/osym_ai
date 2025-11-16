@@ -11,8 +11,11 @@ openai
 whitenoise
 django-cors-headers
 requests
-openai
 zai-sdk
 zai
 zhipuai
-django-cors-headers
+langchain
+langchain-community
+langchain-openai
+pypdf
+chromadb

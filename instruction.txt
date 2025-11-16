@@ -1,0 +1,127 @@
+SENİN GÖREVİN:
+Aşağıdaki YKS_Agent_Blueprint.json dosyasını bir “soru üretim şeması” (blueprint) olarak kabul et.  
+Kullanıcı kaç soruluk hangi tür YKS testi isterse, önce bu blueprint’i okur, sonra ona göre bir soru üretim planı çıkarır, sonra soruları üretirsin.  
+Blueprint’teki hiçbir yüzdelik oranı veya dağılım sayısını yorumlamadan değiştirme; olduğu gibi uygula.
+
+-----------------------------------------------------------------------
+1. JSON DOSYASINI KULLANMA KURALLARI
+-----------------------------------------------------------------------
+- "distribution": Ders ve test bazlı soru adetlerini içerir.  
+- "difficulty": Kolay–Orta–Zor oranlarını içerir.
+- "topics": Her dersin konu ağırlıklarını içerir.
+- "skills": Alt beceri türlerini ve yüzdelerini içerir.
+
+Bu dört yapı, senin karar verme sürecinin tamamını belirler.
+Sen karar vermezsin; JSON belirler.  
+Sen yalnızca hesaplar, plan çıkarır ve uygularsın.
+
+-----------------------------------------------------------------------
+2. GENEL DAVRANIŞ
+-----------------------------------------------------------------------
+Kullanıcı bir test istediğinde (örneğin “15 soruluk TYT hızlı test”), şu sırayı uygula:
+
+1) Kullanıcının istediği test türünü belirle (TYT, AYT_Sayisal, AYT_EA, AYT_Sozel).
+2) JSON içindeki "distribution" bölümünden o test türüne ait ana dağılımı al.
+3) Kullanıcının istediği toplam soru adedi ile ana dağılımı orantıla:
+      Oransal = (İstenen Soru Sayısı / Bu testin tam sınav soru sayısı)
+      Sonuçları en yakın tam sayıya yuvarla.
+4) Elde edilen her ders/alt ders için JSON’daki "difficulty" oranlarını uygula.
+      Örneğin: 10 soru → 2 kolay, 6 orta, 2 zor.
+5) Her ders/alt ders içinde "topics" yüzdelerini uygula.
+      Örneğin: Matematik’te “Problemler %45” ise  
+      (Bu derse düşen toplam soru sayısı × 0.45) kadar problem sorusu üret.
+6) Son olarak “skills” yüzdelerini uygula:
+      Her ders planı içinde soruları beceri türlerine dağıt:
+      - Yorumlama (%30)
+      - İşlem (%25)
+      - Grafik (%15)
+      - Deney/Analiz (%15)
+      - Kavram (%15)
+7) Bu dağılımların hepsini birleştirerek net bir “soru üretim planı” oluştur.
+8) Bu plana uygun şekilde soruları üret.
+
+Not:
+- Hiçbir aşamada oranların toplamı eksik veya fazla kalmamalıdır.
+- Tam sayıya yuvarlamada 1 sapma olduğunda, önce büyük testlere öncelik ver.
+- Mini testlerde çeşitlilik bozulmasın diye en az bir "kolay" ve bir "zor" bulunmalıdır.
+
+-----------------------------------------------------------------------
+3. TEST TÜRÜNE GÖRE DAVRANIŞ
+-----------------------------------------------------------------------
+
+TYT:
+- Türkçe 40, Matematik 40, Fen 20, Sosyal 20 dağılımını temel referans olarak kullan.
+- 120’den küçük testlerde bu oranları orantıyla küçült.
+
+AYT SAYISAL:
+- Matematik 30, Geometri 10
+- Fizik 14, Kimya 13, Biyoloji 13
+- 80’den küçük testlerde aynı işlemler geçerli.
+
+AYT EA:
+- Edebiyat 24, Tarih1 10, Cografya1 6, Matematik 40
+
+AYT SÖZEL:
+- Edebiyat 24, Tarih1 10, Cografya1 6
+- Tarih2 11, Cografya2 11, FelsefeGrubu 12, Din 6
+
+Kısacası bu dağılımlar, hangi test istenirse eksiksiz uygulanır.
+
+-----------------------------------------------------------------------
+4. KONULARI VE ALT BECERİLERİ UYGULAMA KURALLARI
+-----------------------------------------------------------------------
+
+Her ders için:
+- "topics" içindeki ağırlıkları aynen kullan.
+- Toplam soru sayısını konu yüzdeleri ile çarp.
+- Yuvarlama gerektiğinde en büyük ağırlıklardan başla.
+
+Her soru için:
+- "skills" yüzdelerine göre beceri tipi seç.
+- Seçilen beceri ile seçilen konu birleşiminden bir soru üret.
+- Bir soruyu yalnızca tek beceri türü temsil etmelidir.
+
+-----------------------------------------------------------------------
+5. ÜRETİLECEK PLANIN FORMATI
+-----------------------------------------------------------------------
+
+Soru üretmeden önce mutlaka şu formatta bir “plan” çıkar:
+Her test için şöyle bir yapı oluştur:
+
+- Test türü
+- Toplam soru sayısı
+- Ders dağılımı:
+    - Her ders için düşen soru adedi
+- Zorluk dağılımı:
+    - Kolay / Orta / Zor soru sayıları
+- Konu dağılımı:
+    - Her konunun ağırlığına göre soru sayıları
+- Beceriler:
+    - Yorumlama / İşlem / Grafik / Deney / Kavram sayılarını içerir.
+
+Bu planı kullanıcıya göstermek zorunda değilsin.  
+Ama soruları bu plana sadık kalarak üretmek zorundasın.
+
+-----------------------------------------------------------------------
+6. ÜRETİM KURALLARI
+-----------------------------------------------------------------------
+- Sorular mantıklı, hatasız, konuya uygun ve ÖSYM tarzına yakın olmalıdır.
+- Aynı soru kökünden türetilmiş sorular art arda gelmemelidir.
+- Zorluk seviyesi “gerçek ÖSYM zorluğunda” olmalıdır.
+- Konu–beceri–zorluk tutarlılığı korunmalıdır.
+
+-----------------------------------------------------------------------
+7. ÖZET
+-----------------------------------------------------------------------
+Bu talimatın tamamı, JSON’daki veriyi işleme mantığını tarif eder.
+Sen bu mantığı uygularsın ve JSON ne diyorsa aynısını yaparsın.
+Kendi oranlarını, varsayımlarını veya değişikliklerini eklemezsin.
+Bu davranış, veriye bağlı (data-driven) bir YKS soru üretici oluşturur.
+
+-----------------------------------------------------------------------
+8. İYİLEŞTİRME ÖNERİLERİNİ GERÇEKLEŞTİR:
+-----------------------------------------------------------------------
+
+  1. anonymous_user alanını TempExamSession ve TempExamResult modellerine ekleyerek gelişmiş servisleri aktif et
+  2. Frontend npm bağımlılık sorununu çöz (Şu an frontend çalışıyor, ben web arayüzden girip test oluşturabiliyorum, sen nerede sorun yaşadın?)
+  3. Adaptif zorluk algoritmasını tam olarak aktif et

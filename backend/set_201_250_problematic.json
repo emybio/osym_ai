@@ -1,0 +1,340 @@
+[
+  {
+    "id": "FIZ-FBC35F6D",
+    "subject": "Fizik",
+    "question": "Sesin havi yayilma hizi kactir?",
+    "issues": [
+      "No fizik content found"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "FIZ-FE4A882C",
+    "subject": "Fizik",
+    "question": "Fiziksel prensiplere göre aşağıdaki durumda ne olur? Fizikte \"HIZ\" kavramini tanmlaynz.",
+    "issues": [
+      "No fizik content found"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-04765749",
+    "subject": "Geometri",
+    "question": "\"PIRAMIT\" geometrik sekli ile ilgili temel soru 24.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-1253AC98",
+    "subject": "Geometri",
+    "question": "\"KURE\" geometrik sekli ile ilgili temel soru 26.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-1258DC35",
+    "subject": "Geometri",
+    "question": "\"PARALEL\" geometrik sekli ile ilgili temel soru 45.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-13E60FB1",
+    "subject": "Geometri",
+    "question": "\"DOGRU\" geometrik sekli ile ilgili temel soru 44.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-151D0939",
+    "subject": "Geometri",
+    "question": "\"KON\" geometrik sekli ile ilgili temel soru 41.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-16EEC6ED",
+    "subject": "Geometri",
+    "question": "\"ALAN\" geometrik sekli ile ilgili temel soru 32.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-1C91ED66",
+    "subject": "Geometri",
+    "question": "\"NOKTA\" geometrik sekli ile ilgili temel soru 43.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-1FA0C266",
+    "subject": "Geometri",
+    "question": "\"PIRAMIT\" geometrik sekli ile ilgili temel soru 39.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-248A6190",
+    "subject": "Geometri",
+    "question": "\"PIRAMIT\" geometrik sekli ile ilgili temel soru 13.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-33135AB6",
+    "subject": "Geometri",
+    "question": "\"KONI\" geometrik sekli ile ilgili temel soru 25.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-393C950D",
+    "subject": "Geometri",
+    "question": "\"KON\" geometrik sekli ile ilgili temel soru 15.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-3C163F29",
+    "subject": "Geometri",
+    "question": "\"CEVRE\" geometrik sekli ile ilgili temel soru 31.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-4336BCB3",
+    "subject": "Geometri",
+    "question": "\"NOKTA\" geometrik sekli ile ilgili temel soru 17.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-441091FC",
+    "subject": "Geometri",
+    "question": "\"OZDESLIK\" geometrik sekli ile ilgili temel soru 49.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-44448F0A",
+    "subject": "Geometri",
+    "question": "\"OZDESLIK\" geometrik sekli ile ilgili temel soru 23.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-4A961C83",
+    "subject": "Geometri",
+    "question": "\"PIRAMIT\" geometrik sekli ile ilgili temel soru 50.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-4B14D7D8",
+    "subject": "Geometri",
+    "question": "\"KURE\" geometrik sekli ile ilgili temel soru 52.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-575D3065",
+    "subject": "Geometri",
+    "question": "\"SILINDIR\" geometrik sekli ile ilgili temel soru 40.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-5CB97B66",
+    "subject": "Geometri",
+    "question": "\"DIK\" geometrik sekli ile ilgili temel soru 46.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-62892577",
+    "subject": "Geometri",
+    "question": "\"DOGRU\" geometrik sekli ile ilgili temel soru 18.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-7AF2952E",
+    "subject": "Geometri",
+    "question": "\"BENZERLIK\" geometrik sekli ile ilgili temel soru 22.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-886D95EB",
+    "subject": "Geometri",
+    "question": "\"PRIZMA\" geometrik sekli ile ilgili temel soru 38.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-8922A45E",
+    "subject": "Geometri",
+    "question": "\"SILINDIR\" geometrik sekli ile ilgili temel soru 14.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-90E59634",
+    "subject": "Geometri",
+    "question": "\"KENAR\" geometrik sekli ile ilgili temel soru 35.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-97047B28",
+    "subject": "Geometri",
+    "question": "\"ALAN\" geometrik sekli ile ilgili temel soru 6.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-9E9F67F9",
+    "subject": "Geometri",
+    "question": "\"KONI\" geometrik sekli ile ilgili temel soru 51.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-A54DA0D9",
+    "subject": "Geometri",
+    "question": "\"PARALEL\" geometrik sekli ile ilgili temel soru 19.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-A70A73CD",
+    "subject": "Geometri",
+    "question": "\"DIK\" geometrik sekli ile ilgili temel soru 20.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-AE6E2063",
+    "subject": "Geometri",
+    "question": "\"BENZERLIK\" geometrik sekli ile ilgili temel soru 48.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-B35F0054",
+    "subject": "Geometri",
+    "question": "\"CIZGI\" geometrik sekli ile ilgili temel soru 16.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-B412FE27",
+    "subject": "Geometri",
+    "question": "\"YUKSEKLIK\" geometrik sekli ile ilgili temel soru 10.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  },
+  {
+    "id": "GEO-B50767D0",
+    "subject": "Geometri",
+    "question": "\"KENAR\" geometrik sekli ile ilgili temel soru 9.",
+    "issues": [
+      "Generic content detected",
+      "Missing question mark"
+    ],
+    "choices_count": 5
+  }
+]

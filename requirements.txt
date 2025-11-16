@@ -1,0 +1,48 @@
+# ─────────────────────────────────────────────
+# 🧠 Django + LangChain AI Backend (2025)
+# ─────────────────────────────────────────────
+
+# Django ve REST
+Django>=5.0
+djangorestframework>=3.16.0
+django-cors-headers>=4.3.0
+dj-database-url>=3.0.0
+python-dotenv>=1.0.0
+whitenoise>=6.0.0
+
+# Veritabanı
+psycopg2-binary>=2.9.9
+
+# Görev Kuyruğu
+celery>=5.5.0
+redis>=5.0.0
+django-celery-beat>=2.8.0
+
+# ─────────────────────────────────────────────
+# 🤖 AI + LangChain + OpenAI + Chroma
+# ─────────────────────────────────────────────
+
+# LangChain çekirdek modülleri (modern bölünme sonrası)
+langchain-core>=0.3.20
+langchain-community>=0.3.18
+langchain-openai>=0.2.8
+
+# Chroma veritabanı (vektör arama için)
+chromadb>=0.5.3
+
+# Belgeleri okumak için
+pypdf>=5.0.0
+
+# OpenAI & Zhipu & ZAI SDK’lar
+openai>=1.0.0
+zhipuai>=1.0.7
+zai-sdk>=0.0.4.1
+zai>=0.0.2
+
+# ─────────────────────────────────────────────
+# 🧩 Yardımcılar
+# ─────────────────────────────────────────────
+requests>=2.32.0
+tqdm>=4.67.0
+typing-extensions>=4.12.0
+packaging>=25.0

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Çevrimdışısınız - OSYM AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .status {
+            margin-top: 30px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .pulse {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 107, 107, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
+            }
+        }
+
+        .cached-content {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .cached-content h3 {
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .cached-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .cached-content li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cached-content li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">
+            📱
+        </div>
+        <h1>Çevrimdışısınız</h1>
+        <p>İnternet bağlantınız bulunmuyor. Endişelenmeyin, bazı içeriklere çevrimdışı olarak erişebilirsiniz.</p>
+
+        <a href="/" class="btn" onclick="window.location.reload(); return false;">Yeniden Dene</a>
+        <a href="/" class="btn secondary-btn">Ana Sayfa</a>
+
+        <div class="status">
+            <span class="pulse"></span>
+            <span id="connection-status">Çevrimdışı</span>
+            <p style="margin-top: 8px; font-size: 14px;">
+                Bağlantı kurulduğunda sayfa otomatik yenilenecektir.
+            </p>
+        </div>
+
+        <div class="cached-content">
+            <h3>📚 Çevrimdışı Erişilebilir İçerikler</h3>
+            <ul>
+                <li>✅ Önceden indirilen test soruları</li>
+                <li>✅ Konu anlatımları</li>
+                <li>✅ İlerleme durumunuz</li>
+                <li>✅ Hızlı test modu</li>
+                <li>✅ Hesaplama araçları</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Monitor connection status
+        function updateConnectionStatus() {
+            const statusElement = document.getElementById('connection-status');
+            const pulseElement = document.querySelector('.pulse');
+
+            if (navigator.onLine) {
+                statusElement.textContent = 'Çevrimiçi';
+                pulseElement.style.background = '#51cf66';
+
+                // Show notification and reload after a delay
+                setTimeout(() => {
+                    if (confirm('İnternet bağlantısı kuruldu. Sayfayı yeniden yüklemek ister misiniz?')) {
+                        window.location.reload();
+                    }
+                }, 1000);
+            } else {
+                statusElement.textContent = 'Çevrimdışı';
+                pulseElement.style.background = '#ff6b6b';
+            }
+        }
+
+        // Listen for connection changes
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        // Initial status
+        updateConnectionStatus();
+
+        // Periodic connection check (every 30 seconds)
+        setInterval(() => {
+            if (!navigator.onLine) {
+                fetch('/api/health-check', {
+                    method: 'HEAD',
+                    cache: 'no-cache'
+                })
+                .then(() => {
+                    // Connection restored
+                    updateConnectionStatus();
+                })
+                .catch(() => {
+                    // Still offline
+                });
+            }
+        }, 30000);
+
+        // Cache some essential data for offline use
+        if ('serviceWorker' in navigator && 'caches' in window) {
+            caches.match('/api/quiz/subjects/').then(response => {
+                if (response) {
+                    console.log('Konular önbellekte mevcut');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,48 +1,48 @@
 version: "3.9"
+
 services:
   db:
     image: postgres:18
+    container_name: osym_db
     environment:
-      POSTGRES_PASSWORD: osym
-      POSTGRES_USER: postgres
       POSTGRES_DB: osym
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: osym
     ports:
       - "5432:5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 3s
       retries: 5
     volumes:
-      - postgres-data:/var/lib/postgresql/
+      - postgres-data:/var/lib/postgresql/data
 
   redis:
     image: redis:7
+    container_name: osym_redis
+    ports:
+      - "6379:6379"
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+    container_name: osym_backend
     command: >
-      bash -c "python manage.py migrate &&
-               python manage.py runserver 0.0.0.0:8000"
+      bash -c "
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000"
+    env_file:
+      - ./backend/.env.docker
     environment:
-      ZAI_API_KEY: ${ZAI_API_KEY}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      POSTGRES_DB: ${POSTGRES_DB:-osym}
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-osym}
-      POSTGRES_HOST: ${POSTGRES_HOST:-db}
-      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
-      IGNORE_SSL: ${IGNORE_SSL:-True}
-      NODE_TLS_REJECT_UNAUTHORIZED: ${NODE_TLS_REJECT_UNAUTHORIZED:-0}
-      ZAI_MODEL: ${ZAI_MODEL:-glm-4.6}
-      DATABASE_URL: ${DATABASE_URL}
+      DJANGO_ENV=docker
     volumes:
-      - ./backend:/app # backend kodları canlı izlenir
-      - /app/__pychache__/ # 🔹 Kod değişiklikleri anında yansır
+      - ./backend:/app
+      - ./backend/media:/app/media
+      - ./backend/chroma_yks_pdf:/app/chroma_yks_pdf
+      - ./backend/chroma_past:/app/chroma_past
     ports:
       - "8000:8000"
-    
     depends_on:
       - db
       - redis
@@ -50,19 +50,52 @@ services:
   frontend:
     build:
       context: ./frontend
-    command: [ "npm", "run", "dev", "--", "--host", "0.0.0.0" ] # Vite dev server çalışır
+    container_name: osym_frontend
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
     ports:
-      - "5173:5173" # Vite varsayılan port
+      - "5173:5173"
     volumes:
-      - ./frontend:/app # canlı kod izleme
-      - /app/node_modules # bağımlılıklar container içinde kalır
-    environment:
-      - CHOKIDAR_USEPOLLING=true # Docker'da dosya değişimlerini algılar
-      - VITE_API_URL=http://backend:8000 # Backend API URL
-    
+      - ./frontend:/app
+      - /app/node_modules
     working_dir: /app
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      VITE_API_URL: http://backend:8000
     depends_on:
       - backend
+
+  celery-worker:
+    build:
+      context: ./backend
+    container_name: osym_celery_worker
+    command: celery -A osym_ai worker --loglevel=info --queues=pdf_processing,default
+    env_file:
+      - ./backend/.env.docker
+    environment:
+      DJANGO_ENV=docker
+    volumes:
+      - ./backend:/app
+      - ./backend/media:/app/media
+      - ./backend/chroma_yks_pdf:/app/chroma_yks_pdf
+      - ./backend/chroma_past:/app/chroma_past
+    depends_on:
+      - backend
+      - redis
+
+  celery-beat:
+    build:
+      context: ./backend
+    container_name: osym_celery_beat
+    command: celery -A osym_ai beat --loglevel=info
+    env_file:
+      - ./backend/.env.docker
+    environment:
+      DJANGO_ENV=docker
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - backend
+      - redis
 
 volumes:
   postgres-data:

@@ -1,0 +1,183 @@
+{
+  "distribution": {
+    "TYT": {
+      "Turkce": 40,
+      "Matematik": 40,
+      "Fen": {
+        "Fizik": 7,
+        "Kimya": 7,
+        "Biyoloji": 6
+      },
+      "Sosyal": {
+        "Tarih": 5,
+        "Cografya": 5,
+        "Felsefe": 5,
+        "Din": 5
+      }
+    },
+    "AYT_Sayisal": {
+      "Matematik": {
+        "Matematik": 30,
+        "Geometri": 10
+      },
+      "Fen": {
+        "Fizik": 14,
+        "Kimya": 13,
+        "Biyoloji": 13
+      }
+    },
+    "AYT_EA": {
+      "Edebiyat": 24,
+      "Tarih1": 10,
+      "Cografya1": 6,
+      "Matematik": 40
+    },
+    "AYT_Sozel": {
+      "Edebiyat": 24,
+      "Tarih1": 10,
+      "Cografya1": 6,
+      "Tarih2": 11,
+      "Cografya2": 11,
+      "FelsefeGrubu": 12,
+      "Din": 6
+    }
+  },
+  "difficulty": {
+    "easy": 0.20,
+    "medium": 0.60,
+    "hard": 0.20
+  },
+  "topics": {
+    "TYT": {
+      "Turkce": {
+        "Paragraf": 0.55,
+        "DilBilgisi": 0.20,
+        "CumledeAnlam": 0.15,
+        "SozcukteAnlam": 0.10
+      },
+      "Matematik": {
+        "Problemler": 0.40,
+        "TemelIslemler": 0.20,
+        "SayiTeorisi": 0.10,
+        "Cebir": 0.10,
+        "Geometri_Temel": 0.20
+      },
+      "Fizik": {
+        "KuvvetHareket": 0.30,
+        "IsEnerji": 0.20,
+        "BasincKuvvet": 0.15,
+        "Elektrik": 0.20,
+        "OptikDalgalar": 0.15
+      },
+      "Kimya": {
+        "AtomYapi": 0.20,
+        "Etkilesimler": 0.25,
+        "AsitBazTuz": 0.15,
+        "Karisimlar": 0.20,
+        "Hesaplamalar": 0.20
+      },
+      "Biyoloji": {
+        "Hucre": 0.30,
+        "Genetik": 0.20,
+        "Ekoloji": 0.25,
+        "Sistemler": 0.25
+      },
+      "Tarih": {
+        "IlkTurk": 0.20,
+        "Osmanli": 0.40,
+        "TCInkılap": 0.40
+      },
+      "Cografya": {
+        "Fiziki": 0.40,
+        "IklimHarita": 0.30,
+        "BeseriEkonomik": 0.30
+      },
+      "Felsefe": {
+        "Bilgi": 0.40,
+        "Bilim": 0.30,
+        "AhlakVarlik": 0.30
+      },
+      "Din": {
+        "TemelKavramlar": 0.50,
+        "IslamKulturSanat": 0.50
+      }
+    },
+    "AYT": {
+      "Matematik": {
+        "Fonksiyonlar": 0.15,
+        "Polinomlar": 0.10,
+        "Trigonometri": 0.10,
+        "Turev": 0.20,
+        "Integral": 0.20,
+        "KarmasikSayilar": 0.05,
+        "Logaritma": 0.10,
+        "LimitDiziler": 0.10
+      },
+      "Geometri": {
+        "Ucgenler": 0.30,
+        "DortgenCokgen": 0.20,
+        "Analitik": 0.25,
+        "CemberDaire": 0.15,
+        "KatiCisim": 0.10
+      },
+      "Fizik": {
+        "Kinematik": 0.20,
+        "Dinamik": 0.20,
+        "Elektrik": 0.20,
+        "ModernFizik": 0.20,
+        "DalgaOptik": 0.20
+      },
+      "Kimya": {
+        "Tepkimeler": 0.25,
+        "Organik": 0.25,
+        "DengeCozunurluk": 0.20,
+        "Termokimya": 0.15,
+        "Elektrokimya": 0.15
+      },
+      "Biyoloji": {
+        "HucreMekanizmalari": 0.25,
+        "SinirEndokrin": 0.20,
+        "UremeGelisme": 0.15,
+        "Ekosistem": 0.20,
+        "Evrim": 0.20
+      },
+      "Edebiyat": {
+        "Siir": 0.20,
+        "RomanHikaye": 0.20,
+        "Tiyatro": 0.10,
+        "Cumhuriyet": 0.25,
+        "Tanzimat_Servet_Fecra": 0.25
+      },
+      "Tarih1": {
+        "Osmanli": 0.60,
+        "Inkılap": 0.40
+      },
+      "Cografya1": {
+        "TurkiyeFiziki": 0.50,
+        "InsanEkonomi": 0.50
+      },
+      "Tarih2": {
+        "DunyaTarihi": 0.40,
+        "Osmanli": 0.30,
+        "Cagdas_TC": 0.30
+      },
+      "Cografya2": {
+        "Bolgesel": 0.40,
+        "Ekonomik": 0.30,
+        "CevreNufus": 0.30
+      },
+      "FelsefeGrubu": {
+        "Psikoloji": 0.30,
+        "Sosyoloji": 0.30,
+        "Mantik": 0.40
+      }
+    }
+  },
+  "skills": {
+    "Yorumlama": 0.30,
+    "IslemHesaplama": 0.25,
+    "GrafikTablo": 0.15,
+    "DeneyGozlem": 0.15,
+    "KavramSorgulama": 0.15
+  }
+}

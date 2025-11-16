@@ -1,0 +1,5 @@
+"Kodu yazarken Clean Code prensiplerini uygula (DRY, KISS, YAGNI), tüm input'ları validate et ve 
+SQL injection/XSS gibi güvenlik açıklarına karşı koru, hassas bilgileri environment variable'larda tut, 
+database sorgularını optimize et (N+1 probleminden kaçın), proper error handling ve logging ekle, 
+dependency injection kullanarak test edilebilir kod yaz, kritik bölümlere anlamlı yorumlar ekle ve production-ready, 
+scalable bir kod üret."

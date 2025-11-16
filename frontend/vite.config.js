@@ -10,6 +10,13 @@ export default defineConfig({
     hmr: false,        // HMR (WebSocket) kapalı -> connection reset hatası biter
     watch: {
       usePolling: true // dosya değişikliklerini algılar
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false
+      }
     }
   }
 })

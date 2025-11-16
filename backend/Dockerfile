@@ -15,11 +15,10 @@ RUN pip install --no-cache-dir  --trusted-host pypi.org --trusted-host files.pyt
 # Geliştirme sırasında host kodunu mount edeceğiz (COPY yok)
 # Böylece her kod değişikliği container içinde anında görünür
 
-# Django otomatik reload
+# Django settings
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=osym_ai.settings
-ENV DEBUG=1
 
-# Başlatma komutu
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Production için varsayılan komut (development'da docker-compose override eder)
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "osym_ai.wsgi:application"]
 RUN apt update && apt install -y postgresql-client

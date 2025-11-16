@@ -1,26 +1,43 @@
-# --- Python / Django ---
+# =============================
+#   ENV & SECRETS
+# =============================
+
+# Önce tüm env'leri ignore et
+.env
+.env.*
+.envrc
+
+# Ama development ve production env'lerini COMMIT ET
+!.env.development
+!.env.production
+
+# Kişiye özel env ignore edilmeli
+.env.local
+
+# =============================
+#   PYTHON / DJANGO
+# =============================
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 *.so
 *.log
+*.pid
 db.sqlite3
-.env
-.env.local
-.env.production
-.env.development
-.envrc
 media/
 staticfiles/
-*.pid
 
-# --- Sanal ortamlar ---
+# =============================
+#   VIRTUAL ENVIRONMENTS
+# =============================
 env/
 venv/
 .venv/
 
-# --- Docker ---
+# =============================
+#   DOCKER FILES
+# =============================
 *.pid
 *.seed
 *.bak
@@ -28,7 +45,9 @@ venv/
 *.tar
 *.gz
 
-# --- Node / React ---
+# =============================
+#   NODE / REACT
+# =============================
 node_modules/
 dist/
 build/
@@ -37,7 +56,9 @@ yarn-debug.log*
 yarn-error.log*
 *.map
 
-# --- IDE / Sistem ---
+# =============================
+#   IDE / OS GARBAGE
+# =============================
 .vscode/
 .idea/
 *.swp

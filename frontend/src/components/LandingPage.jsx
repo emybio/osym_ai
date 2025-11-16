@@ -16,7 +16,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 
-const LandingPage = ({ onStartDemo, onStartAssessment }) => {
+const LandingPage = ({ onStartDemo, onStartAssessment, onStartQuickTest }) => {
   // Testimonials data
   const testimonials = [
     {
@@ -58,7 +58,7 @@ const LandingPage = ({ onStartDemo, onStartAssessment }) => {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
               <Zap className="w-4 h-4" />
-              YKS 2025'ye Hazır mısın?
+              YKS 2026'ya Hazır mısın?
             </div>
 
             {/* Main Heading */}
@@ -77,22 +77,34 @@ const LandingPage = ({ onStartDemo, onStartAssessment }) => {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <button
-                onClick={onStartDemo}
-                className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200"
+                onClick={onStartQuickTest}
+                className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200"
               >
                 <Play className="w-5 h-5" />
-                Hemen Deneyin (Ücretsiz)
+                Ücretsiz Hızlı Test Çöz
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
 
               <button
-                onClick={onStartAssessment}
+                onClick={onStartDemo}
                 className="inline-flex items-center gap-2 bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg border-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200"
               >
-                <Target className="w-5 h-5" />
-                Seviye Testi Yap
+                <Brain className="w-5 h-5" />
+                Platformu Deneyin
+              </button>
+            </div>
+
+            {/* Secondary CTA */}
+            <div className="flex justify-center mb-12">
+              <button
+                onClick={onStartAssessment}
+                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+              >
+                <Target className="w-4 h-4" />
+                Detaylı seviye testi yap
+                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
