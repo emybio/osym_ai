@@ -5,7 +5,7 @@ from .models import (
     PDFDocument, PDFProcessingLog, TempExamSession, TempExamQuestion,
     TempExamResult, ExamResult
 )
-
+from django.contrib.auth.models import User
 
 class ChoiceSerializer(serializers.ModelSerializer):
     """Serializer for Choice model"""

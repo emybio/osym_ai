@@ -232,7 +232,7 @@ const PDFUploadPage = ({ onLogout }) => {
 
           {/* Upload Area */}
           <div
-            className={`border-2 border-dashed rounded-xl p-8 text-center ${
+            className={`relative border-2 border-dashed rounded-xl p-8 text-center ${
               dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
             }`}
             onDragEnter={handleDrag}

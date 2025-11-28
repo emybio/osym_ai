@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from '../api/config';
 import {
   Award,
   BarChart3,
@@ -13,13 +14,13 @@ import {
 import { STUDENT_STATS, WEEKLY_ACTIVITY, WEEK_DAYS } from '../constants';
 
 const StatisticCard = ({ title, value, icon: Icon, accent }) => (
-  <div className="bg-white border border-gray-200 rounded-xl p-5 flex items-center gap-4 shadow-sm">
-    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${accent}`}>
-      <Icon className="w-6 h-6" />
+  <div className="bg-white border border-gray-200 rounded-xl p-3 sm:p-5 flex items-center gap-3 sm:gap-4 shadow-sm">
+    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${accent}`}>
+      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
     </div>
     <div>
-      <p className="text-sm text-gray-500">{title}</p>
-      <p className="text-2xl font-semibold text-gray-900">{value.toLocaleString()}</p>
+      <p className="text-xs sm:text-sm text-gray-500">{title}</p>
+      <p className="text-lg sm:text-2xl font-semibold text-gray-900">{value.toLocaleString()}</p>
     </div>
   </div>
 );
@@ -34,12 +35,12 @@ const DashboardPage = () => {
     const fetchQuickTestData = async () => {
       try {
         // Get dashboard stats
-        const statsResponse = await fetch('/api/quiz/dashboard/stats/', {
+        const statsResponse = await fetch(getApiUrl('/dashboard/stats/'), {
           credentials: 'same-origin'
         });
 
         // Get quick test results
-        const resultsResponse = await fetch('/api/quiz/quicktest/results/', {
+        const resultsResponse = await fetch(getApiUrl('/quicktest/results/'), {
           credentials: 'same-origin'
         });
 
@@ -50,7 +51,7 @@ const DashboardPage = () => {
 
         if (resultsResponse.ok) {
           const resultsData = await resultsResponse.json();
-          setQuickTestResults(resultsData);
+          setQuickTestResults(resultsData.results || []);
         }
       } catch (error) {
         console.error('Error fetching quick test data:', error);
@@ -65,7 +66,7 @@ const DashboardPage = () => {
   return (
     <div className="space-y-6">
       {/* Original Stats + Quick Test Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         <StatisticCard
           title="Toplam Çözülen Soru"
           value={STUDENT_STATS.totalQuestions}
@@ -92,13 +93,13 @@ const DashboardPage = () => {
             accent="bg-green-500/10 text-green-600"
           />
         ) : (
-          <div className="bg-white border border-gray-200 rounded-xl p-5 flex items-center gap-4 shadow-sm">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gray-100">
-              <Activity className="w-6 h-6 text-gray-400" />
+          <div className="bg-white border border-gray-200 rounded-xl p-3 sm:p-5 flex items-center gap-3 sm:gap-4 shadow-sm">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center bg-gray-100">
+              <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Hızlı Test</p>
-              <div className="w-16 h-4 bg-gray-200 rounded animate-pulse"></div>
+              <p className="text-xs sm:text-sm text-gray-500">Hızlı Test</p>
+              <div className="w-12 sm:w-16 h-3 sm:h-4 bg-gray-200 rounded animate-pulse"></div>
             </div>
           </div>
         )}
@@ -106,44 +107,44 @@ const DashboardPage = () => {
 
     {/* Quick Test Results Section */}
       {!loading && quickTestResults.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 flex items-center gap-2">
               <Activity className="w-5 h-5 text-green-600" />
               Hızlı Test Sonuçları
             </h3>
             {!loading && quickTestStats && (
-              <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600">
                 <div className="flex items-center gap-1">
-                  <Target className="w-4 h-4" />
+                  <Target className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span>Ortalama: %{quickTestStats.average_score?.toFixed(1) || 0}</span>
                 </div>
               </div>
             )}
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {quickTestResults.slice(0, 5).map((result, idx) => (
-              <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <div key={idx} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-100 gap-3 sm:gap-0">
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold flex-shrink-0 ${
                     result.percentage >= 70 ? 'bg-green-100 text-green-700' :
                     result.percentage >= 50 ? 'bg-yellow-100 text-yellow-700' :
                     'bg-red-100 text-red-700'
                   }`}>
                     {result.percentage.toFixed(0)}%
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-900">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
                       {result.exam_type} {result.branch}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs sm:text-sm text-gray-500">
                       {result.correct_count}/{result.total_questions} doğru • {new Date(result.created_at).toLocaleDateString('tr-TR')}
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">
+                <div className="text-right sm:text-right">
+                  <p className="text-xs sm:text-sm font-medium text-gray-900">
                     {result.percentage >= 70 ? 'Harika!' :
                      result.percentage >= 50 ? 'İyi' : 'Geliştirilebilir'}
                   </p>

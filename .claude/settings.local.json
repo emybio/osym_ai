@@ -3,9 +3,9 @@
     "ANTHROPIC_AUTH_TOKEN": "f128c53a50a44dbd80fdfca30ebd42ea.EtUzdlTz35ose1t3",
     "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
     "API_TIMEOUT_MS": "3000000",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "GLM-4.6",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "GLM-4.6",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "GLM-4.5-Air"
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.6",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.6"
   },
   "permissions": {
     "allow": [
@@ -48,7 +48,13 @@
       "Bash(DJANGO_SETTINGS_MODULE=osym_ai.settings /mnt/c/Users/kur06/Downloads/osym_ai/env/Scripts/python.exe -c:*)",
       "Bash(npm run dev:*)",
       "Bash(npm install:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(docker context ls:*)",
+      "Bash(echo:*)",
+      "Bash(set:*)",
+      "Bash(taskkill:*)",
+      "Bash(DJANGO_ENV=office_development python manage.py runserver:*)",
+      "Bash(DJANGO_ENV=office_development python:*)"
     ],
     "deny": [],
     "ask": []

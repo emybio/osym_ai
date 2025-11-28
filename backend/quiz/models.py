@@ -62,8 +62,75 @@ class Question(models.Model):
     explanation = models.TextField(blank=True)  # Rubrik açıklama
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Duplicate tracking fields
+    similarity_score = models.FloatField(null=True, blank=True, help_text="En yüksek benzerlik skoru (0-1 arası)")
+    is_duplicate = models.BooleanField(default=False, help_text="Kopya soru olarak işaretlendi mi?")
+    duplicate_of = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL,
+                                     related_name='duplicates', help_text="Hangi sorunun kopyası olduğu")
+    embedding_vector = models.JSONField(null=True, blank=True, help_text="Vektör gösterimi (gelecek kullanım için)")
+    last_similarity_check = models.DateTimeField(null=True, blank=True, help_text="Son benzerlik kontrol tarihi")
+
     def __str__(self):
-        return f"{self.id} - {self.topic.name}"
+        return f"{self.id} - {self.topic.name if self.topic else 'No Topic'}"
+
+
+class UserQuestionHistory(models.Model):
+    """
+    Kullanıcıların soru çözüm geçmişini takip etmek için optimize edilmiş model
+    Performans için Redis cache ile birlikte çalışır
+    """
+    user_identifier = models.CharField(max_length=255, db_index=True)  # session_key, IP, user_id etc.
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, db_index=True)
+    session = models.ForeignKey('TempExamSession', null=True, blank=True, on_delete=models.SET_NULL)
+    answered_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    is_correct = models.BooleanField(null=True, blank=True)  # null for unanswered questions
+    answer_given = models.CharField(max_length=1, null=True, blank=True)  # A, B, C, D, E
+    time_spent_seconds = models.PositiveIntegerField(null=True, blank=True)
+    difficulty_rating = models.PositiveSmallIntegerField(null=True, blank=True)  # 1-5 user rating
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user_identifier', 'answered_at']),
+            models.Index(fields=['user_identifier', 'question']),
+            models.Index(fields=['session', 'answered_at']),
+        ]
+        unique_together = ['user_identifier', 'question']  # Aynı kullanıcı aynı soruyu bir kez görebilir
+        ordering = ['-answered_at']
+
+    def __str__(self):
+        return f"{self.user_identifier} - {self.question.id} ({self.answered_at})"
+
+
+class UserPerformanceMetrics(models.Model):
+    """
+    Kullanıcı performans metrikleri için aggregate model
+    Performans optimizasyonu için günlük/haftalık özetler tutar
+    """
+    user_identifier = models.CharField(max_length=255, db_index=True)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    date = models.DateField(db_index=True)  # Günlük aggregate
+
+    # Performans metrikleri
+    total_questions = models.PositiveIntegerField(default=0)
+    correct_answers = models.PositiveIntegerField(default=0)
+    average_time_seconds = models.FloatField(default=0)
+    difficulty_distribution = models.JSONField(default=dict)  # {1: count, 2: count, ...}
+    topic_performance = models.JSONField(default=dict)  # {topic_name: {correct, total}}
+
+    # Trend metrikleri
+    improvement_score = models.FloatField(default=0)  # -1 to 1 scale
+    consistency_score = models.FloatField(default=0)  # 0 to 1 scale
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user_identifier', 'date']),
+            models.Index(fields=['subject', 'date']),
+        ]
+        unique_together = ['user_identifier', 'subject', 'date']
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.user_identifier} - {self.subject.name} ({self.date})"
 
 
 class Choice(models.Model):

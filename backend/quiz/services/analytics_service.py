@@ -621,8 +621,8 @@ class AnalyticsService:
                 return {}
 
             # Başarı ve başarısız test sayıları
-            successful_tests = user_results.filter(percentage >= 70).count()
-            excellent_tests = user_results.filter(percentage >= 90).count()
+            successful_tests = user_results.filter(result__percentage__gte=70).count()
+            excellent_tests = user_results.filter(result__percentage__gte=90).count()
 
             return {
                 'total_tests': total_tests,

@@ -8,8 +8,24 @@ const QuickTestExam = ({ sessionData, onComplete, onBack }) => {
   const [answers, setAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(sessionData.duration_minutes * 60);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const questions = sessionData.questions || [];
+  // Load questions from GET endpoint
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const response = await apiCall(`/quicktest/get/?uuid=${sessionData.uuid}`, { method: 'GET' });
+        setQuestions(response.questions || []);
+        setLoading(false);
+      } catch (error) {
+        console.error('Sorular yüklenemedi:', error);
+        setLoading(false);
+      }
+    };
+
+    loadQuestions();
+  }, [sessionData.uuid]);
 
   // Timer effect
   useEffect(() => {
@@ -34,10 +50,19 @@ const QuickTestExam = ({ sessionData, onComplete, onBack }) => {
 
   // Handle answer selection
   const handleAnswerSelect = (questionId, option) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionId]: option
-    }));
+    console.log('🔍 ANSWER SELECT DEBUG:');
+    console.log('  Question ID:', questionId, 'Type:', typeof questionId);
+    console.log('  Option:', option);
+    console.log('  Current answers before:', answers);
+
+    setAnswers(prev => {
+      const newAnswers = {
+        ...prev,
+        [questionId]: option
+      };
+      console.log('  New answers:', newAnswers);
+      return newAnswers;
+    });
   };
 
   // Navigation
@@ -64,6 +89,12 @@ const QuickTestExam = ({ sessionData, onComplete, onBack }) => {
 
   // Submit exam
   const handleSubmit = async () => {
+    console.log('🔍 FRONTEND SUBMIT DEBUG:');
+    console.log('  Answers:', answers);
+    console.log('  Answers keys:', Object.keys(answers));
+    console.log('  Answers length:', Object.keys(answers).length);
+    console.log('  Expected questions:', questions.length);
+
     if (answeredCount === 0) {
       alert('Lütfen en az bir soru cevaplayın');
       return;
@@ -80,8 +111,11 @@ const QuickTestExam = ({ sessionData, onComplete, onBack }) => {
         }),
       });
 
-      // apiCall zaten JSON döndürür ve hata kontrolü yapar
-      onComplete(result);
+      console.log('🔍 QuickTestExam - API result:', result);
+
+      // Backend'den gelen format: {"message": "...", "result": {...}}
+      // QuickTestResults sadece result kısmını bekliyor
+      onComplete(result.result || result);
 
     } catch (error) {
       console.error('Error submitting exam:', error);
@@ -91,7 +125,7 @@ const QuickTestExam = ({ sessionData, onComplete, onBack }) => {
     }
   };
 
-  if (!questions.length) {
+  if (loading || !questions.length) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

@@ -129,21 +129,21 @@ const GamificationProfilePage = () => {
       )}
 
       {/* Navigation Tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+      <div className="flex flex-wrap gap-1 sm:flex-nowrap sm:space-x-1 bg-gray-100 p-1 rounded-lg">
         {['profile', 'achievements', 'leaderboard', 'challenges'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+            className={`flex-1 py-2 px-2 sm:px-4 rounded-md text-xs sm:text-sm font-medium transition-colors min-w-0 ${
               activeTab === tab
                 ? 'bg-white text-blue-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            {tab === 'profile' && 'Profil'}
-            {tab === 'achievements' && 'Başarılar'}
-            {tab === 'leaderboard' && 'Lider Tablosu'}
-            {tab === 'challenges' && 'Meydan Okumalar'}
+            <span className="truncate block">{tab === 'profile' && 'Profil'}</span>
+            <span className="truncate block">{tab === 'achievements' && 'Başarılar'}</span>
+            <span className="truncate block">{tab === 'leaderboard' && 'Liderlik'}</span>
+            <span className="truncate block">{tab === 'challenges' && 'Meydan Oku'}</span>
           </button>
         ))}
       </div>
@@ -152,25 +152,25 @@ const GamificationProfilePage = () => {
       {activeTab === 'profile' && profile && (
         <div className="space-y-6">
           {/* User Profile Card */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-4">
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center ${getBadgeColor(profile.level)}`}>
+          <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center ${getBadgeColor(profile.level)}`}>
                   {getLevelIcon(profile.level)}
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                     {profile.level_info.name} Seviye
                   </h2>
                   <p className="text-gray-500">{profile.points} Puan</p>
                 </div>
               </div>
 
-              <div className="text-right">
-                <div className="text-3xl font-bold text-blue-600">
+              <div className="text-center sm:text-right">
+                <div className="text-2xl sm:text-3xl font-bold text-blue-600">
                   #{profile.rank?.rank || '-'}
                 </div>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500">
                   {profile.rank?.total_users ? `Toplam ${profile.rank.total_users} kullanıcı` : 'Sıralama yok'}
                 </p>
               </div>
@@ -201,11 +201,11 @@ const GamificationProfilePage = () => {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
+            <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
               <div className="flex items-center justify-between mb-4">
-                <Trophy className="w-8 h-8 text-yellow-500" />
-                <span className="text-2xl font-bold text-gray-900">{profile.achievements_count}</span>
+                <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500" />
+                <span className="text-xl sm:text-2xl font-bold text-gray-900">{profile.achievements_count}</span>
               </div>
               <p className="text-sm text-gray-600">Kazanılan Başarı</p>
               <p className="text-xs text-gray-500">
@@ -213,10 +213,10 @@ const GamificationProfilePage = () => {
               </p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-6">
+            <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
               <div className="flex items-center justify-between mb-4">
-                <Target className="w-8 h-8 text-blue-500" />
-                <span className="text-2xl font-bold text-gray-900">
+                <Target className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
+                <span className="text-xl sm:text-2xl font-bold text-gray-900">
                   {Math.round((profile.achievements_count / profile.total_possible_achievements) * 100)}%
                 </span>
               </div>
@@ -224,10 +224,10 @@ const GamificationProfilePage = () => {
               <p className="text-xs text-gray-500">Başarı ilerlemesi</p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-6">
+            <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
               <div className="flex items-center justify-between mb-4">
-                <TrendingUp className="w-8 h-8 text-green-500" />
-                <span className="text-2xl font-bold text-gray-900">
+                <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
+                <span className="text-xl sm:text-2xl font-bold text-gray-900">
                   {profile.rank?.top_percentage ? `Top %${profile.rank.top_percentage}` : '-'}
                 </span>
               </div>
@@ -242,9 +242,9 @@ const GamificationProfilePage = () => {
       {activeTab === 'achievements' && achievements && (
         <div className="space-y-6">
           {/* Achievement Stats */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Başarı İstatistikleri</h3>
-            <div className="grid gap-4 md:grid-cols-4">
+          <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Başarı İstatistikleri</h3>
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-4">
               <div className="text-center">
                 <div className="text-3xl font-bold text-blue-600">{achievements.stats.earned_achievements}</div>
                 <p className="text-sm text-gray-600">Kazanılan</p>
@@ -288,10 +288,10 @@ const GamificationProfilePage = () => {
           )}
 
           {/* Achievement Categories */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {Object.entries(achievements.categories).map(([category, categoryAchievements]) => (
-              <div key={category} className="bg-white border border-gray-200 rounded-xl p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 capitalize">
+              <div key={category} className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 capitalize">
                   {category === 'streak' && 'Seri Başarıları'}
                   {category === 'score' && 'Skor Başarıları'}
                   {category === 'milestone' && 'Kilometre Taşları'}
@@ -299,7 +299,7 @@ const GamificationProfilePage = () => {
                   {category === 'performance' && 'Performans Başarıları'}
                   {category === 'special' && 'Özel Başarılar'}
                 </h3>
-                <div className="grid gap-3 md:grid-cols-2">
+                <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
                   {categoryAchievements.map((achievement, index) => (
                     <div
                       key={index}

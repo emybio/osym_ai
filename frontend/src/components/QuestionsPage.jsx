@@ -103,13 +103,16 @@ const QuestionsPage = () => {
   };
 
   const getSourceIcon = (source) => {
-    if (source === 'zai') {
-      return <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Z.ai</span>;
+    if (source === 'claude') {
+      return <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Claude</span>;
+    } else if (source === 'deepseek') {
+      return <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">DeepSeek</span>;
     } else if (source === 'openai') {
       return <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">OpenAI</span>;
     }
     return <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">{source}</span>;
   };
+
 
   if (loading) {
     return (
@@ -142,11 +145,11 @@ const QuestionsPage = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <BookOpen className="w-6 h-6 text-blue-600" />
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
               Veritabanı Soruları
             </h1>
             <p className="text-gray-600 mt-1">
@@ -155,7 +158,7 @@ const QuestionsPage = () => {
           </div>
           <button
             onClick={fetchQuestions}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+            className="px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 text-sm sm:text-base"
           >
             Yenile
           </button>
@@ -163,8 +166,8 @@ const QuestionsPage = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -222,37 +225,38 @@ const QuestionsPage = () => {
           filteredQuestions.map((question) => (
             <div
               key={question.id}
-              className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow"
+              className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 hover:shadow-md transition-shadow"
             >
-              <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   {/* Question Header */}
-                  <div className="flex flex-wrap items-center gap-2 mb-3">
-                    <span className="text-sm font-medium text-gray-500 flex items-center gap-1">
-                      <Hash className="w-4 h-4" />
+                  <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-3">
+                    <span className="text-xs sm:text-sm font-medium text-gray-500 flex items-center gap-1">
+                      <Hash className="w-3 h-3 sm:w-4 sm:h-4" />
                       #{question.id}
                     </span>
-                    <span className="text-sm text-gray-500 flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
+                    <span className="text-xs sm:text-sm text-gray-500 flex items-center gap-1">
+                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                       {new Date(question.created_at).toLocaleDateString('tr-TR')}
                     </span>
                     {getSourceIcon(question.source)}
-                    <span className={`text-xs px-2 py-1 rounded-full ${getDifficultyColor(question.difficulty)}`}>
+                    <span className={`text-xs px-1 sm:px-2 py-1 rounded-full ${getDifficultyColor(question.difficulty)}`}>
                       {getDifficultyLabel(question.difficulty)}
                     </span>
-                    <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
+                    <span className="text-xs bg-gray-100 text-gray-700 px-1 sm:px-2 py-1 rounded-full">
                       {question.subject_display || question.subject}
                     </span>
                   </div>
 
                   {/* Question Content */}
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">
                     {question.stem}
                   </h3>
 
                   {/* Choices */}
                   <div className="grid sm:grid-cols-2 gap-2 mb-3">
                     {question.choices_display?.map((choice, index) => {
+                      if (!choice || !question.answer) return null;
                       const isCorrect = choice.startsWith(String.fromCharCode(65 + question.answer.charCodeAt(0) - 65));
                       return (
                         <div
@@ -300,7 +304,7 @@ const QuestionsPage = () => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && questionToDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full">
+          <div className="bg-white rounded-xl p-4 sm:p-6 max-w-md w-full">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Soru Silme Onayı
             </h3>

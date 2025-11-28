@@ -107,7 +107,7 @@ class Command(BaseCommand):
                 imported_count += 1
 
                 if imported_count % 50 == 0:
-                    self.stdout.write(f"{imported} soru işlendi...")
+                    self.stdout.write(f"{imported_count} soru işlendi...")
 
             except Question.DoesNotExist:
                 self.stdout.write(self.style.WARNING(f"Question bulunamadı: {question_id}"))

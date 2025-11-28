@@ -428,7 +428,7 @@ class RateLimitingService:
             if recent_results.count() < 5:  # Yeterli veri yoksa kontrol yapma
                 return {'allowed': True}
 
-            successful_tests = recent_results.filter(percentage >= 50).count()
+            successful_tests = recent_results.filter(result__percentage__gte=50).count()
             total_tests = recent_results.count()
             success_rate = successful_tests / total_tests
 

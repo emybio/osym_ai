@@ -1,0 +1,132 @@
+{
+  "ders": "TÜRK DİLİ VE EDEBİYATI | MATEMATİK | GEOMETRİ | TARİH ...",
+  "kategori": "TYT | AYT",
+  "siniflar": [
+    9,
+    10,11,12
+  ],
+  "aciklama": "Bu dosya ilgili derse ait TYT/AYT tüm ünite-konu-kazanımlarını içerir.",
+  "auto_difficulty_engine": {
+    "status": "enabled",
+    "method": "semantic_kazanım_analysis",
+    "description": "Kazanım metni anlam analizi yapılarak zorluk otomatik belirlenir.",
+    "rules": {
+      "easy_keywords": [
+        "tanır",
+        "belirler",
+        "ayırır",
+        "sayar",
+        "gösterir",
+        "basit",
+        "temel",
+        "örnek verir",
+        "açıklar"
+      ],
+      "medium_keywords": [
+        "uygular",
+        "kullanır",
+        "ilişkilendirir",
+        "dönüştürür",
+        "çözümler",
+        "yorumlar",
+        "karşılaştırır"
+      ],
+      "hard_keywords": [
+        "analiz eder",
+        "türetir",
+        "modelleme",
+        "ispatlar",
+        "geneller",
+        "soyutlar",
+        "sentezler"
+      ],
+      "scoring": {
+        "easy_weight": 1,
+        "medium_weight": 2,
+        "hard_weight": 3
+      }
+    },
+    "output_scale": {
+      "min": 1,
+      "max": 5,
+      "mapping": {
+        "1-2": "Kolay",
+        "2-3.5": "Orta",
+        "3.5-5": "Zor"
+      }
+    }
+  },
+  "adaptive_difficulty": {
+    "mode": "dynamic",
+    "description": "Öğrenci performansına göre soru zorluğu otomatik kayar.",
+    "student_skill_index": {
+      "range": "0.0 - 1.0",
+      "levels": {
+        "basic": "0.00 - 0.39",
+        "medium": "0.40 - 0.69",
+        "advanced": "0.70 - 1.00"
+      }
+    },
+    "adaptive_shift": {
+      "basic_level": {
+        "easy": "+0.25",
+        "medium": "-0.10",
+        "hard": "-0.15"
+      },
+      "medium_level": {
+        "easy": "-0.10",
+        "medium": "+0.10",
+        "hard": "0.00"
+      },
+      "advanced_level": {
+        "easy": "-0.20",
+        "medium": "0.00",
+        "hard": "+0.20"
+      }
+    }
+  },
+  "unite_listesi": [
+    {
+      "unite_adi": "Şiir Bilgisi",
+      "unite_no": 1,
+      "konular": [
+        {
+          "konu_adi": "Şiirin Öğeleri",
+          "kazanımlar": [
+            {
+              "kazanım_kodu": "TDE.9.1.1",
+              "kazanım_metin": "Şiirde geçen kelime ve kelime gruplarının anlamlarını bağlamdan çıkartır.",
+              "zorluk_auto": {
+                "score": 2.1,
+                "label": "Kolay-Orta",
+                "explanation": "kazanım metni 'belirler', 'çıkartır', 'anlamını bulur' gibi orta düzey bilişsel fiiller içeriyor."
+              },
+              "zorluk_manual_override": null,
+              "alt_beceriler": [
+                {
+                  "ad": "Bağlamdan anlam bulma",
+                  "hedef_davranis": "Kelime anlamını cümle yapısı içinde çıkarabilme"
+                }
+              ],
+              "soru_turleri": [
+                "Yorumlama",
+                "Anlam bulma",
+                "Bağlam analizi"
+              ],
+              "soru_dagilimi": {
+                "kolay": 40,
+                "orta": 40,
+                "zor": 20
+              },
+              "adaptive_mod": {
+                "aktif": true,
+                "kolay_artis": "+%15 (temel seviyede)",
+                "zor_azalis": "-%20 (temel seviyede)"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,8 +1,9 @@
 import random
 from typing import List, Dict, Set
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.db.models import Count, Q
+from django.utils import timezone
 from quiz.models import Question, Subject, TempExamSession, TempExamQuestion
 
 
@@ -25,83 +26,78 @@ class SmartQuestionSelector:
         Returns:
             List[Question]: Seçilen sorular
         """
-        # Kullanıcının daha önce çözdüğü soruları al
-        user_question_history = self._get_user_question_history(user_identifier)
+        from django.db.models import Count
+
+        # Performance: User history'yi devre dışı bırak (hız için)
+        user_question_history = set()
+        # if user_identifier:
+        #     user_question_history = self._get_user_question_history(user_identifier)
 
         # Her ders için gereken soru sayısını hesapla
         subject_requirements = self._calculate_subject_requirements(session)
 
+        # Performance: Tüm konuları tek seferde al
+        available_subjects = Subject.objects.filter(
+            code__in=subject_requirements.keys()
+        ).annotate(
+            question_count=Count('question')
+        ).filter(question_count__gt=0)
+
+        # Mevcut olmayan konuları requirements'tan çıkar
+        available_subject_codes = set(s.code for s in available_subjects)
+        subject_requirements = {
+            k: v for k, v in subject_requirements.items()
+            if k in available_subject_codes
+        }
+
         selected_questions = []
+        remaining_needed = session.question_count
 
         for subject_code, required_count in subject_requirements.items():
-            try:
-                subject = Subject.objects.get(code=subject_code)
+            if remaining_needed <= 0:
+                break
 
-                # Bu ders için uygun soruları seç
-                subject_questions = self._select_subject_questions(
-                    subject=subject,
-                    required_count=required_count,
-                    excluded_question_ids=user_question_history,
-                    session=session
-                )
+            # Mevcut konuları map'ten al (tekrar sorgu yapma)
+            subject = next(s for s in available_subjects if s.code == subject_code)
 
-                selected_questions.extend(subject_questions)
+            # Bu ders için gereken soru sayısını yeniden hesapla
+            actual_needed = min(required_count, remaining_needed)
 
-            except Subject.DoesNotExist:
-                continue
+            # Bu ders için uygun soruları seç
+            subject_questions = self._select_subject_questions(
+                subject=subject,
+                required_count=actual_needed,
+                excluded_question_ids=user_question_history,
+                session=session
+            )
+
+            selected_questions.extend(subject_questions)
+            remaining_needed -= len(subject_questions)
+
+        # Eğer hala eksik soru varsa, mevcut konulardan rastgele ekle
+        if remaining_needed > 0:
+            existing_questions = Question.objects.filter(
+                subject__in=available_subjects
+            ).exclude(id__in=selected_questions)
+
+            additional_questions = list(existing_questions.order_by('?')[:remaining_needed])
+            selected_questions.extend(additional_questions)
 
         # Seçilen soruları rastgele karıştır
         random.shuffle(selected_questions)
 
         # Kullanıcı geçmişine yeni soruları ekle
-        if user_identifier:
+        if user_identifier and selected_questions:
             self._add_to_user_history(user_identifier, selected_questions)
 
         return selected_questions
 
     def _get_user_question_history(self, user_identifier) -> Set[int]:
         """
-        Kullanıcının daha önce çözdüğü soru ID'lerini getirir
+        HIZLI PERFORMANCE İÇİN BOŞ - TempExamSession sorgusu çok yavaşlıyordu
         """
-        if not user_identifier:
-            return set()
-
-        # Cache'den kontrol et
-        if user_identifier in self.question_history_cache:
-            return self.question_history_cache[user_identifier]
-
-        # Veritabanından kullanıcı geçmişini al
-        # Son 30 gündeki soruları kontrol et (yenilik sağlamak için)
-        thirty_days_ago = datetime.now() - timedelta(days=30)
-
-        recent_question_ids = set()
-
-        try:
-            # TempExamQuestion üzerinden kullanıcı geçmişini trace et
-            # user_identifier genellikle session_key veya IP address olur
-            past_sessions = TempExamSession.objects.filter(
-                Q(session_key=user_identifier) |
-                Q(temp_data__ip_address=user_identifier)
-            ).filter(
-                created_at__gte=thirty_days_ago
-            ).prefetch_related('questions')
-
-            for session in past_sessions:
-                for temp_question in session.questions.all():
-                    # Asıl Question ID'sini bulmak için text match kullan
-                    original_questions = Question.objects.filter(
-                        question_text=temp_question.question_text
-                    )
-                    recent_question_ids.update(original_questions.values_list('id', flat=True))
-
-        except Exception as e:
-            # Hata durumunda boş geçmiş döndür
-            print(f"Error getting user question history: {e}")
-
-        # Cache'e ekle
-        self.question_history_cache[user_identifier] = recent_question_ids
-
-        return recent_question_ids
+        # User history'i devre dışı bırak - 25 saniyelik soruna neden oluyordu
+        return set()
 
     def _calculate_subject_requirements(self, session) -> Dict[str, int]:
         """
@@ -225,49 +221,51 @@ class SmartQuestionSelector:
 
     def _select_subject_questions(self, subject, required_count, excluded_question_ids, session):
         """
-        Belirli bir ders için soru seçimi yapar
+        Belirli bir ders için optimize edilmiş soru seçimi yapar
         """
         try:
-            # Önce exclude edilen sorular hariç tüm soruları al
-            available_questions = Question.objects.filter(
-                subject=subject
-            ).exclude(
-                id__in=excluded_question_ids
-            )
+            # Performance: Tek sorguda tüm soruları al
+            all_questions = Question.objects.filter(subject=subject)
 
-            available_count = available_questions.count()
+            # Excluded ID'ler varsa filtrele
+            if excluded_question_ids:
+                available_questions = all_questions.exclude(id__in=excluded_question_ids)
+            else:
+                available_questions = all_questions
+
+            # Performans: Count yerine len() kullan
+            available_questions_list = list(available_questions)
+            available_count = len(available_questions_list)
 
             # Eğer yeterli sayıda yeni soru yoksa, eski soruları da dahil et
-            if available_count < required_count:
+            if available_count < required_count and excluded_question_ids:
                 additional_needed = required_count - available_count
                 # Eski sorulardan rastgele seç
-                old_questions = Question.objects.filter(
-                    subject=subject,
-                    id__in=excluded_question_ids
-                ).order_by('?')[:additional_needed]
+                old_questions = list(all_questions.filter(id__in=excluded_question_ids).order_by('?')[:additional_needed])
 
                 # Yeni sorular + eski sorular
-                selected_questions = list(available_questions.order_by('?')[:available_count])
-                selected_questions.extend(list(old_questions))
-
+                selected_questions = available_questions_list + old_questions
             else:
                 # Yeterli yeni soru varsa, sadece yeni sorulardan seç
-                selected_questions = list(available_questions.order_by('?')[:required_count])
+                selected_questions = available_questions_list
 
-            # Konu çeşitliliği sağla (eğer mümkünse)
-            selected_questions = self._ensure_topic_diversity(selected_questions, subject, required_count)
+            # Performans: Topic diversity'yi sadece çok fazla soru varsa yap
+            if len(selected_questions) > required_count * 2:
+                selected_questions = self._ensure_topic_diversity(selected_questions, subject, required_count)
 
-            return selected_questions
+            # Rastgele karıştır ve kes
+            random.shuffle(selected_questions)
+            return selected_questions[:required_count]
 
         except Exception as e:
             print(f"Error selecting questions for subject {subject.name}: {e}")
-            return Question.objects.filter(subject=subject).order_by('?')[:required_count]
+            return list(Question.objects.filter(subject=subject).order_by('?')[:required_count])
 
     def _ensure_topic_diversity(self, questions, subject, required_count):
         """
         Seçilen soruların konu çeşitliliğini sağlar
         """
-        if not questions:
+        if not questions or len(questions) <= required_count:
             return questions
 
         # Konulara göre grupla
@@ -295,8 +293,16 @@ class SmartQuestionSelector:
         remaining_questions = [q for q in questions if q not in diverse_questions]
         random.shuffle(remaining_questions)
 
-        needed = required_count - len(diverse_questions)
+        needed = min(required_count - len(diverse_questions), len(remaining_questions))
         diverse_questions.extend(remaining_questions[:needed])
+
+        # Eğer hala eksik varsa, kullanılmayan sorulardan rastgele ekle
+        while len(diverse_questions) < required_count and len(diverse_questions) < len(questions):
+            unused_questions = [q for q in questions if q not in diverse_questions]
+            if unused_questions:
+                diverse_questions.append(random.choice(unused_questions))
+            else:
+                break
 
         return diverse_questions[:required_count]
 
@@ -337,5 +343,20 @@ class SmartQuestionSelector:
         }
 
 
-# Global instance
-smart_selector = SmartQuestionSelector()
+# Global instance with lazy initialization
+_smart_selector = None
+
+def get_smart_selector():
+    """Get or create the smart selector instance"""
+    global _smart_selector
+    if _smart_selector is None:
+        _smart_selector = SmartQuestionSelector()
+    return _smart_selector
+
+# Backward compatibility
+class _SmartSelectorProxy:
+    def __getattr__(self, name):
+        selector = get_smart_selector()
+        return getattr(selector, name)
+
+smart_selector = _SmartSelectorProxy()

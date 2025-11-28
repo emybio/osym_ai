@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useProtectedRoute } from '../hooks/useProtectedRoute';
+import { getApiUrl } from '../api/config';
+import Toast from './Toast';
 
 const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#F97316', '#06B6D4', '#84CC16'];
 
 // Simple Bar Chart Component
 const SimpleBarChart = ({ data, title, dataKey = 'value', labelKey = 'name' }) => (
-    <div className="bg-white p-4 rounded-lg shadow border">
-        <h3 className="text-lg font-semibold mb-4">{title}</h3>
-        <div className="space-y-2">
+    <div className="bg-white p-4 sm:p-6 rounded-lg shadow border">
+        <h3 className="text-lg sm:text-xl font-semibold mb-4">{title}</h3>
+        <div className="space-y-3">
             {data?.map((item, index) => (
-                <div key={index} className="flex items-center space-x-4">
-                    <div className="w-32 text-sm font-medium truncate">{item[labelKey] || item.name || item.subject || item.level}</div>
-                    <div className="flex-1">
-                        <div className="bg-gray-200 rounded-full h-6 relative">
+                <div key={index} className="flex items-center space-x-3 sm:space-x-4">
+                    <div className="w-24 sm:w-32 flex-shrink-0 text-xs sm:text-sm font-medium truncate">{item[labelKey] || item.name || item.subject || item.level}</div>
+                    <div className="flex-1 min-w-0">
+                        <div className="bg-gray-200 rounded-full h-5 sm:h-6 relative">
                             <div
-                                className="bg-gradient-to-r from-blue-400 to-blue-600 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium"
+                                className="bg-gradient-to-r from-blue-400 to-blue-600 h-5 sm:h-6 rounded-full flex items-center justify-center text-white text-xs font-medium px-1"
                                 style={{ width: `${Math.min((item[dataKey] || item.value || item.count) / Math.max(...data.map(d => d[dataKey] || d.value || d.count)) * 100, 100)}%` }}
                             >
-                                {item[dataKey] || item.value || item.count}
+                                <span className="truncate">{item[dataKey] || item.value || item.count}</span>
                             </div>
                         </div>
                     </div>
@@ -32,17 +34,17 @@ const SimplePieChart = ({ data, title }) => {
     const total = data?.reduce((sum, item) => sum + (item.value || item.count), 0) || 0;
 
     return (
-        <div className="bg-white p-4 rounded-lg shadow border">
-            <h3 className="text-lg font-semibold mb-4">{title}</h3>
-            <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow border">
+            <h3 className="text-lg sm:text-xl font-semibold mb-4">{title}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {data?.map((item, index) => (
-                    <div key={index} className="flex items-center space-x-2">
+                    <div key={index} className="flex items-center space-x-2 sm:space-x-3">
                         <div
-                            className="w-4 h-4 rounded-full"
+                            className="w-3 h-3 sm:w-4 sm:h-4 rounded-full flex-shrink-0"
                             style={{ backgroundColor: COLORS[index % COLORS.length] }}
                         ></div>
-                        <div className="text-sm">
-                            <div className="font-medium">{item.name || item.subject || item.exam_type}</div>
+                        <div className="text-xs sm:text-sm min-w-0 flex-1">
+                            <div className="font-medium truncate">{item.name || item.subject || item.exam_type}</div>
                             <div className="text-gray-500">
                                 {item.value || item.count} ({total > 0 ? ((item.value || item.count) / total * 100).toFixed(1) : 0}%)
                             </div>
@@ -116,9 +118,9 @@ const MetricsCard = ({ title, value, subtitle, color = 'blue' }) => {
     };
 
     return (
-        <div className={`p-4 rounded-lg border ${colorClasses[color]}`}>
-            <h3 className="text-sm font-medium">{title}</h3>
-            <p className="text-2xl font-bold">{value}</p>
+        <div className={`p-3 sm:p-4 rounded-lg border ${colorClasses[color]}`}>
+            <h3 className="text-xs sm:text-sm font-medium">{title}</h3>
+            <p className="text-xl sm:text-2xl font-bold">{value}</p>
             <p className="text-xs">{subtitle}</p>
         </div>
     );
@@ -129,8 +131,14 @@ const AnalyticsPage = () => {
     const [period, setPeriod] = useState('week');
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState({});
+    const [toast, setToast] = useState(null);
 
     const { user } = useProtectedRoute();
+
+    const showToast = (message, type = 'info') => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 3000);
+    };
 
     useEffect(() => {
         loadAnalyticsData();
@@ -139,23 +147,23 @@ const AnalyticsPage = () => {
     const loadAnalyticsData = async () => {
         setLoading(true);
         try {
-            let endpoint = `/api/quiz/analytics/${activeTab}/`;
+            let endpoint = `/quiz/analytics/${activeTab}/`;
             if (period) {
                 endpoint += `?period=${period}`;
             }
 
-            const response = await fetch(endpoint);
+            const response = await fetch(getApiUrl(endpoint));
             const result = await response.json();
 
             if (response.ok) {
                 setData(result);
             } else {
                 console.error(result.error || 'Analitik veriler yüklenemedi');
-                alert(result.error || 'Analitik veriler yüklenemedi');
+                showToast(result.error || 'Analitik veriler yüklenemedi', 'error');
             }
         } catch (error) {
             console.error('Analytics loading error:', error);
-            alert('Analitik verileri yüklenirken hata oluştu');
+            showToast('Analitik verileri yüklenirken hata oluştu', 'error');
         } finally {
             setLoading(false);
         }
@@ -172,9 +180,9 @@ const AnalyticsPage = () => {
     };
 
     const DashboardTab = () => (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             {/* Ana Metrikler */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <MetricsCard
                     title="Toplam Kullanıcı"
                     value={formatNumber(data.total_users || 0)}
@@ -202,7 +210,7 @@ const AnalyticsPage = () => {
             </div>
 
             {/* Grafikler */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Kullanıcı Trendi */}
                 <SimpleLineChart
                     data={data.user_trend || []}
@@ -221,9 +229,9 @@ const AnalyticsPage = () => {
             </div>
 
             {/* Performans Metrikleri */}
-            <div className="bg-white p-4 rounded-lg shadow border">
-                <h3 className="text-lg font-semibold mb-4">Performans Metrikleri</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow border">
+                <h3 className="text-lg sm:text-xl font-semibold mb-4">Performans Metrikleri</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div>
                         <p className="text-sm text-gray-500">Günlük Ortalama Test</p>
                         <p className="text-lg font-semibold">{data.daily_avg_tests?.toFixed(1) || '0'}</p>
@@ -300,7 +308,7 @@ const AnalyticsPage = () => {
     const ContentTab = () => (
         <div className="space-y-6">
             {/* İçerik Metrikleri */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <MetricsCard
                     title="Toplam Soru"
                     value={formatNumber(data.total_questions || 0)}
@@ -346,7 +354,7 @@ const AnalyticsPage = () => {
     const EngagementTab = () => (
         <div className="space-y-6">
             {/* Etkileşim Metrikleri */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <MetricsCard
                     title="Oturum Süresi"
                     value={data.avg_session_duration?.toFixed(1) + 'dk' || '0dk'}
@@ -469,6 +477,15 @@ const AnalyticsPage = () => {
 
     return (
         <div className="max-w-7xl mx-auto p-6">
+            {/* Toast */}
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
+
             {/* Header */}
             <div className="mb-6">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>

@@ -17,6 +17,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 import redis
 import threading
 import time
+from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
@@ -314,7 +315,7 @@ class CacheService:
         return stats
 
 
-def cached_result(timeout: int = DEFAULT_TIMEOUT, key_pattern: str = None):
+def cached_result(timeout: int = 300, key_pattern: str = None):
     """
     Decorator for caching function results
     """
@@ -347,7 +348,7 @@ def cached_result(timeout: int = DEFAULT_TIMEOUT, key_pattern: str = None):
     return decorator
 
 
-def cached_queryset(timeout: int = DEFAULT_TIMEOUT):
+def cached_queryset(timeout: int = 300):
     """
     Decorator for caching Django QuerySet results
     """

@@ -29,15 +29,18 @@ class AIService:
 
     def _init_openai_client(self):
         """Initialize OpenAI client if API key is available"""
-        if settings.OPENAI_API_KEY:
+        # Use ABACUSAI_API_KEY for unified provider access
+        api_key = getattr(settings, 'ABACUSAI_API_KEY', None)
+        if api_key and api_key != 'xxx' and api_key.startswith('s2_'):
             # Disable SSL verification for development environments
             import httpx
             client = OpenAI(
-                api_key=settings.OPENAI_API_KEY,
+                api_key=api_key,
+                base_url="https://routellm.abacus.ai/v1",
                 http_client=httpx.Client(verify=False) if os.getenv('IGNORE_SSL', 'False').lower() in ('true', '1', 'yes') else None
             )
             return client
-        logger.warning("OPENAI_API_KEY not configured")
+        logger.warning("ABACUSAI_API_KEY not configured or invalid")
         return None
 
     def _init_zai_client(self):
@@ -527,5 +530,19 @@ class AIService:
 
             raise AIProviderError("No valid JSON found in response", provider="standard")
 
-# Singleton instance
-ai_service = AIService()
+# Singleton instance - will be created when first accessed
+_ai_service_instance = None
+
+def get_ai_service():
+    global _ai_service_instance
+    if _ai_service_instance is None:
+        _ai_service_instance = AIService()
+    return _ai_service_instance
+
+# Create a simple proxy that can be imported
+class _AIServiceProxy:
+    def __getattr__(self, name):
+        return getattr(get_ai_service(), name)
+
+# Create the singleton instance that can be imported
+ai_service = _AIServiceProxy()

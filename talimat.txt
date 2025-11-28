@@ -1,0 +1,105 @@
+BU PROJEDE AŞAĞIDAKİ MİMARİ KESİN VE DEĞİŞTİRİLEMEZDIR.
+GÖREVİN: BEN NE DERSEM ONU YAPMAK, ONUN DIŞINDA HİÇBİR YAPISAL DEĞİŞİKLİK YAPMAMAKTIR.
+
+---------------------------------------------------------------------
+1) ENV DOSYALARI – DEĞİŞTİRİLEMEZ YAPI
+---------------------------------------------------------------------
+
+Backend içinde bulunan ENV dosyaları:
+
+backend/.env.office.dev      ✅ (Ofis - Development - Django server)
+backend/.env.office.prod     ✅ (Ofis - Production - Docker)
+backend/.env.development     ⏳ (Ev - Development - Django server) [Henüz oluşturulmadı]
+backend/.env.docker          ⏳ (Opsiyonel - Docker özel ayarlar) [Gerekirse oluşturulacak]
+
+Frontend içinde bulunan ENV dosyaları:
+
+frontend/.env.office.dev     ✅ (Ofis - Development)
+frontend/.env.production     ✅ (Production - Docker için)
+frontend/.env.development    ⏳ (Ev - Development) [Henüz oluşturulmadı]
+
+ORTAM KULLANIMI:
+- Ofis Dev: Django server ile çalışır (backend/.env.office.dev + frontend/.env.office.dev)
+- Ofis Prod: Docker ile çalışır (backend/.env.office.prod + frontend/.env.production)
+- Ev Dev: Django server ile çalışacak (backend/.env.development + frontend/.env.development)
+- Ev Prod: Docker ile çalışacak (aynı docker-compose.yml)
+
+Bu dosya isimleri, dizinleri ve ayrım mantığı KESİNLİKLE değiştirilmeyecek.
+Yeni env dosyası ekleme, mevcut dosyaları birleştirme veya isim değiştirme YASAKTIR.
+Sadece ben bir dosyadaki belirli bir satırı değiştirmeni söylersem değiştireceksin.
+
+---------------------------------------------------------------------
+2) SETTINGS.PY – ORTAK VE STABİL YAPI
+---------------------------------------------------------------------
+
+settings.py şu anda hem ev hem ofis ortamında çalışacak şekilde doğru yapıdadır.
+Bu dosyada environment switching mekanizması zaten kuruludur.
+settings.py içinde herhangi bir yapısal değişiklik YASAKTIR.
+Sadece benim belirttiğim belirli bir satırı veya ayarı değiştir.
+
+---------------------------------------------------------------------
+3) DOCKERFILE ve DOCKER-COMPOSE – FİNAL MİMARİ
+---------------------------------------------------------------------
+
+Tüm Dockerfile'lar (backend, frontend, celery worker, celery beat)
+ve docker-compose.yml şu anda FINAL mimaridir.
+
+Aşağıdaki işlemler yasaktır:
+
+- dosya yollarını değiştirmek
+- env_file yollarını değiştirmek
+- volume isimlerini değiştirmek
+- service isimlerini değiştirmek
+- ağ yapılarını değiştirmek
+- kendi kendine optimize etmek
+- bağımlılık sırasını değiştirmek
+- COPY, WORKDIR, CMD gibi satırları yeniden tasarlamak
+
+Sadece benim belirttiğim spesifik değişikliği yap.
+
+---------------------------------------------------------------------
+4) PLATFORM UYUMLULUĞU – EV VE OFİS
+---------------------------------------------------------------------
+
+Proje hem ev bilgisayarında hem ofis bilgisayarında çalışmak zorundadır.
+Ben hangi ortamda çalışacağımı söylerim; sen sadece ilgili düzeltmeyi yaparsın.
+Ortamlara göre mimariyi değiştirmeye çalışma.
+
+---------------------------------------------------------------------
+5) YAPABİLECEĞİN İŞLER
+---------------------------------------------------------------------
+
+- belirttiğim ENV satırını değiştirmek
+- belirttiğim Dockerfile satırını değiştirmek
+- belirttiğim compose ayarını düzeltmek
+- hata logu verdiğimde sadece ilgili bölümü düzeltmek
+- ben bir kod bloğu gönderdiğimde sadece o bloğu düzenlemek
+
+Sadece BENİM söylediklerimi uygula.
+Kendi önerilerinle yapıyı değiştirmeye çalışma.
+
+---------------------------------------------------------------------
+6) YAPMAMAN GEREKENLER
+---------------------------------------------------------------------
+
+Aşağıdakiler KESİNLİKLE YASAKTIR:
+
+- Settings.py’yi yeniden tasarlamak
+- Env dosyası isimlerini değiştirmek
+- Yeni environment yapısı önermek
+- Dockerfile’ı optimize etmeye çalışmak
+- docker-compose.yml dosyasını sadeleştirmek
+- Volume/service adlarını değiştirmek
+- Frontend–backend URL mekanizmasını değiştirmek
+- “bence şu daha iyi olur” tarzı mimari önerilerde bulunmak
+- Yapıyı yeniden organize etmek
+- Dosyaları birleştirmek veya ayırmak
+- İzin verilmemiş hiçbir global değişiklik yapmak
+
+---------------------------------------------------------------------
+7) SON TALİMAT
+---------------------------------------------------------------------
+
+Mimari finaldir.
+Sadece benim belirttiğim lokal değişiklikleri yapacaksın.
+Bunun dışında hiçbir dosyaya dokunmayacaksın.

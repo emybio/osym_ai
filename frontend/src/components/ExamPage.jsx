@@ -127,13 +127,24 @@ const ExamPage = ({
                 <input
                   type="radio"
                   name="apiSelect"
-                  value="zai"
-                  checked={selectedApi === "zai"}
+                  value="claude"
+                  checked={selectedApi === "claude"}
                   onChange={(e) => setSelectedApi(e.target.value)} disabled={loadingQuestion}
                 />
-                Z.ai
+                Claude
+              </label>
+              <label className="flex items-center gap-1 cursor-pointer">
+                <input
+                  type="radio"
+                  name="apiSelect"
+                  value="deepseek"
+                  checked={selectedApi === "deepseek"}
+                  onChange={(e) => setSelectedApi(e.target.value)} disabled={loadingQuestion}
+                />
+                DeepSeek
               </label>
             </div>
+
             <button
               onClick={() => {
                 console.log('=== BUTTON CLICKED ===');

@@ -2,7 +2,10 @@
   "distribution": {
     "TYT": {
       "Turkce": 40,
-      "Matematik": 40,
+      "Matematik": {
+        "Matematik": 30,
+        "Geometri": 10
+      },
       "Fen": {
         "Fizik": 7,
         "Kimya": 7,

@@ -2,58 +2,127 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+# ============================================================
+# PATH CONFIGURATION
+# ============================================================
+
+# settings.py: backend/osym_ai/settings.py
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent   # D:/Projeler/osym_ai
+BACKEND_DIR = Path(__file__).resolve().parent.parent           # D:/Projeler/osym_ai/backend
+
+# Django BASE_DIR olarak proje kökü kullanılacak
+BASE_DIR = PROJECT_ROOT
 
 # ============================================================
-# ENV FILE AUTO-SELECTION
+# DJANGO_ENV OTOMATİK SEÇİM SİSTEMİ
 # ============================================================
-DJANGO_ENV = os.getenv("DJANGO_ENV", "development")
+
+# Öncelik sırası:
+# 1. DJANGO_ENV sistemden gelmişse (Docker override) -> onu kullan
+# 2. Aksi halde bilgisayar adına göre otomatik seç
+
+explicit_env = os.getenv("DJANGO_ENV")
+
+if explicit_env:
+    DJANGO_ENV = explicit_env
+else:
+    computer = os.getenv("COMPUTERNAME", "").lower()
+
+    if computer == "s68edenizer":
+        DJANGO_ENV = "office_development"
+    elif computer == "elifnarin":
+        DJANGO_ENV = "home_development"
+    else:
+        DJANGO_ENV = "home_development"
+
+# ============================================================
+# DJANGO_ENV → .env DOSYA HARİTASI
+# ============================================================
 
 ENV_FILE_MAP = {
-    "development": ".env.development",
-    "docker": ".env.docker",
-    "production": ".env.production",
+    # Django runserver (development)
+    "home_development":   PROJECT_ROOT / ".env.dev",
+    "office_development": PROJECT_ROOT / ".env.office.dev",
+
+    # Docker (production ortamları)
+    "production":         PROJECT_ROOT / ".env.prod",
+
+    # Ofis docker özel senaryosu
+    "office_docker":      BACKEND_DIR / ".env.office.prod",
 }
 
-ENV_FILE = ENV_FILE_MAP.get(DJANGO_ENV, ".env.development")
-load_dotenv(os.path.join(BASE_DIR, ENV_FILE))
+# Eğer DJANGO_ENV bilinmeyen ise ev dev'e düş
+env_file_path = ENV_FILE_MAP.get(DJANGO_ENV, PROJECT_ROOT / ".env.dev")
+
+# ============================================================
+# .env DOSYASINI YÜKLE
+# ============================================================
+
+print(f"DJANGO_ENV = {DJANGO_ENV}")
+print(f"Loading environment from: {env_file_path}")
+print(f"File exists: {env_file_path.exists()}")
+
+if env_file_path.exists():
+    load_dotenv(env_file_path)
+else:
+    raise RuntimeError(f".env file not found: {env_file_path}")
 
 # ============================================================
 # BASIC SETTINGS
 # ============================================================
+
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-key")
 
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 DEBUG = ENVIRONMENT != "production"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    os.getenv("LOCAL_IP", ""),
+    os.getenv("SERVER_IP", ""),
+]
+ALLOWED_HOSTS = [h for h in ALLOWED_HOSTS if h]
 
 # ============================================================
 # CORS / CSRF
 # ============================================================
-if ENVIRONMENT == "production":
-    CORS_ALLOWED_ORIGINS = [
-        f"https://{host}" for host in ALLOWED_HOSTS if not host.startswith("127")
-    ]
-else:
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:5173",
-    ]
 
-CORS_ALLOW_ALL_ORIGINS = ENVIRONMENT != "production"
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept', 'accept-encoding', 'authorization', 'content-type',
+    'dnt', 'origin', 'user-agent', 'x-csrftoken', 'x-requested-with',
+]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
+
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
 
 # ============================================================
 # APPLICATIONS
 # ============================================================
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -97,49 +166,33 @@ TEMPLATES = [
 WSGI_APPLICATION = "osym_ai.wsgi.application"
 
 # ============================================================
-# DATABASES
+# DATABASE CONFIGURATION - ONLY SQLITE FOR DEVELOPMENT
 # ============================================================
-POSTGRES_DB = os.getenv("POSTGRES_DB")
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_HOST = os.getenv("POSTGRES_HOST")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 
-if ENVIRONMENT == "production" or DJANGO_ENV == "docker":
+POSTGRES_ENVS = ["office_docker", "production"]
+
+if DJANGO_ENV in POSTGRES_ENVS:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": POSTGRES_DB,
-            "USER": POSTGRES_USER,
-            "PASSWORD": POSTGRES_PASSWORD,
-            "HOST": POSTGRES_HOST,
-            "PORT": POSTGRES_PORT,
+            "NAME": os.getenv("POSTGRES_DB"),
+            "USER": os.getenv("POSTGRES_USER"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+            "HOST": os.getenv("POSTGRES_HOST"),
+            "PORT": os.getenv("POSTGRES_PORT"),
         }
     }
 else:
-    # Development: SQLite unless Postgres is explicitly set
-    if POSTGRES_DB:
-        DATABASES = {
-            "default": {
-                "ENGINE": "django.db.backends.postgresql",
-                "NAME": POSTGRES_DB,
-                "USER": POSTGRES_USER,
-                "PASSWORD": POSTGRES_PASSWORD,
-                "HOST": POSTGRES_HOST,
-                "PORT": POSTGRES_PORT,
-            }
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
-    else:
-        DATABASES = {
-            "default": {
-                "ENGINE": "django.db.backends.sqlite3",
-                "NAME": BASE_DIR / "db.sqlite3",
-            }
-        }
-
+    }
 # ============================================================
 # STATIC / MEDIA
 # ============================================================
+
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
@@ -147,44 +200,43 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # ============================================================
-# REST FRAMEWORK
+# REDIS / CELERY
 # ============================================================
-REST_FRAMEWORK = {
-    "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
-    ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 20,
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True,
+        },
+        "KEY_PREFIX": "osym_ai",
+        "TIMEOUT": 3600,
+    }
 }
 
 # ============================================================
 # AI API KEYS
 # ============================================================
+
+ABACUSAI_API_KEY = os.getenv("ABACUSAI_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ZAI_API_KEY = os.getenv("ZAI_API_KEY")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
-# ============================================================
-# REDIS / CELERY
-# ============================================================
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-
-CELERY_BROKER_URL = REDIS_URL
-CELERY_RESULT_BACKEND = REDIS_URL
-
-# ============================================================
-# PDF Processing
-# ============================================================
-PDF_PROCESSING_ASYNC = os.getenv("PDF_PROCESSING_ASYNC", "True").lower() == "true"
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-3-5-sonnet-20241022")
+DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 
 # ============================================================
 # LOGGING
 # ============================================================
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -194,41 +246,4 @@ LOGGING = {
     "root": {"handlers": ["console"], "level": "INFO"},
 }
 
-# ============================================================
-# SECURITY
-# ============================================================
-if ENVIRONMENT == "production":
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = "DENY"
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-SESSION_COOKIE_DOMAIN = "127.0.0.1"
-CSRF_COOKIE_DOMAIN = "127.0.0.1"
-# ============================================================
-# LOCAL DEV COOKIE & CORS FIX (FINAL)
-# ============================================================
-
-# Cookies cross-site taşınabilsin
-SESSION_COOKIE_SAMESITE = "None"
-CSRF_COOKIE_SAMESITE = "None"
-
-# HTTPS zorunluluğunu kapatıyoruz (localhost olduğumuz için)
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-
-# Cookie kullanılabilsin
-CORS_ALLOW_CREDENTIALS = True
-
-# Frontend adreslerini whitelist'e alıyoruz
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]

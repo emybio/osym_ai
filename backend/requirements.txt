@@ -19,3 +19,6 @@ langchain-community
 langchain-openai
 pypdf
 chromadb
+numpy
+sympy
+scikit-learn

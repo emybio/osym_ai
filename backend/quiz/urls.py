@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import auth_views
+from . import optimized_views
 
 app_name = 'quiz'
 
@@ -26,6 +27,7 @@ urlpatterns = [
 
     # Hızlı Test endpoint'leri
     path("quicktest/init/", views.init_temp_exam, name='init-temp-exam'),
+    path("quicktest/status/", views.get_exam_status, name='get-exam-status'),
     path("quicktest/get/", views.get_temp_exam, name='get-temp-exam'),
     path("quicktest/save/", views.save_temp_exam, name='save-temp-exam'),
     path("quicktest/summary/", views.temp_exam_summary, name='temp-exam-summary'),
@@ -86,4 +88,24 @@ urlpatterns = [
     path("ab-tests/end/", views.end_ab_test, name='ab-test-end'),
     path("ab-tests/client/", views.get_client_ab_config, name='ab-test-client'),
     path("ab-tests/feature-flag/", views.check_feature_flag, name='ab-test-feature-flag'),
+
+    # Duplicate Prevention endpoint'leri
+    path("duplicate/check-similarity/", views.check_question_similarity, name='check-question-similarity'),
+    path("duplicate/diversity-stats/", views.get_question_diversity_stats, name='get-question-diversity-stats'),
+    path("duplicate/batch-check/", views.batch_check_duplicates, name='batch-check-duplicates'),
+    path("duplicate/mark/", views.mark_question_duplicates, name='mark-question-duplicates'),
+    path("duplicate/overview/", views.get_duplicate_overview, name='get-duplicate-overview'),
+    path("duplicate/settings/", views.update_duplicate_settings, name='update-duplicate-settings'),
+
+    # Hybrid AI Provider System endpoint'leri
+    path("ai/test-providers/", views.test_providers, name='test-providers'),
+    path("ai/provider-metrics/", views.provider_metrics, name='provider-metrics'),
+    path("ai/cost-estimate/", views.cost_estimate, name='cost-estimate'),
+
+    # Optimized Question Selection endpoint'leri
+    path("optimized/questions/", optimized_views.get_optimized_questions, name='get-optimized-questions'),
+    path("optimized/answers/", optimized_views.submit_user_answers, name='submit-user-answers'),
+    path("optimized/analytics/", optimized_views.get_user_analytics, name='get-user-analytics'),
+    path("optimized/clear-cache/", optimized_views.clear_user_cache, name='clear-user-cache'),
+    path("optimized/system-stats/", optimized_views.get_system_question_stats, name='get-system-question-stats'),
 ]

@@ -13,6 +13,10 @@ import Sidebar from './components/Sidebar';
 import LandingPage from './components/LandingPage';
 import HomePage from './components/HomePage';
 import DashboardPage from './components/DashboardPage';
+import StudentDashboardPage from './components/StudentDashboardPage';
+import AdminDashboardPage from './components/AdminDashboardPage';
+import AdminDashboardLayout from './components/AdminDashboardLayout';
+import StudentDashboardLayout from './components/StudentDashboardLayout';
 import ExamPage from './components/ExamPage';
 import ProgressPage from './components/ProgressPage';
 import SubjectsPage from './components/SubjectsPage';
@@ -26,6 +30,7 @@ import QuickTestResults from './components/QuickTestResults';
 import AnalyticsPage from './components/AnalyticsPage';
 import DatabaseStatusPage from './components/DatabaseStatusPage';
 import ABTestingPage from './components/ABTestingPage';
+import AIProviderTestPage from './components/AIProviderTestPage';
 import Toast, { ToastProvider, useToast } from './components/Toast';
 import AnimatedTransition from './components/AnimatedTransition';
 import LoadingOverlay from './components/LoadingOverlay';
@@ -64,7 +69,11 @@ const AppContent = () => {
         setCurrentPage('login');
         setShowLanding(false);
       } else if (path === '/upload') {
-        setCurrentPage('upload');
+      } else if (path === '/student-dashboard') {
+        setCurrentPage('student-dashboard');
+        setShowLanding(false);
+      } else if (path.startsWith('/admin/')) {
+        setCurrentPage('admin-dashboard');
         setShowLanding(false);
       } else if (path === '/') {
         setCurrentPage('landing');
@@ -84,7 +93,10 @@ const AppContent = () => {
     if (page === 'login') {
       window.history.pushState({}, '', '/login');
     } else if (page === 'upload') {
-      window.history.pushState({}, '', '/upload');
+    } else if (page === 'student-dashboard') {
+      window.history.pushState({}, '', '/student-dashboard');
+    } else if (page === 'admin-dashboard') {
+      window.history.pushState({}, '', '/admin/dashboard');
     } else if (page === 'landing') {
       window.history.pushState({}, '', '/');
     }
@@ -92,7 +104,7 @@ const AppContent = () => {
     setTimeout(() => {
       setCurrentPage(page);
       // If navigating to main app, hide landing page
-      if (['dashboard', 'exams', 'progress', 'subjects', 'questions'].includes(page)) {
+      if (['student-dashboard', 'admin-dashboard', 'exams', 'progress', 'subjects', 'questions'].includes(page)) {
         setShowLanding(false);
       }
       // Reset submenu when navigating to main items
@@ -148,6 +160,7 @@ const AppContent = () => {
   };
 
   const handleQuickTestComplete = (results) => {
+    console.log('🔍 handleQuickTestComplete - received results:', results);
     setQuickTestResults(results);
     setCurrentPage('quicktest-results');
   };
@@ -169,7 +182,7 @@ const AppContent = () => {
     console.log('Account created:', userData);
     // Redirect to main app after successful registration
     setShowLanding(false);
-    setCurrentPage('dashboard');
+    setCurrentPage('student-dashboard');
     setQuickTestSession(null);
     setQuickTestResults(null);
   };
@@ -195,9 +208,9 @@ const AppContent = () => {
       <AnimatedTransition>
         <LoginPage
           onLoginSuccess={() => {
-            // SPA-style login success
-            window.history.pushState({}, '', '/upload');
-            setCurrentPage('upload');
+            // SPA-style login success - check admin status
+            window.history.pushState({}, '', '/admin/dashboard');
+            setCurrentPage('admin-dashboard');
             setShowLanding(false);
           }}
         />
@@ -285,7 +298,16 @@ const AppContent = () => {
     );
   }
 
-  // Main app layout
+  // Handle separate dashboard layouts
+  if (isAdmin && (currentPage === 'admin-dashboard' || window.location.pathname.startsWith('/admin/'))) {
+    return <AdminDashboardLayout />;
+  }
+
+  if (!isAdmin && currentPage === 'student-dashboard') {
+    return <StudentDashboardLayout />;
+  }
+
+  // Main app layout for non-admin users
   return (
     <div className="min-h-screen bg-gray-50 lg:pl-64">
       <Sidebar
@@ -329,6 +351,7 @@ const AppContent = () => {
         <main className="max-w-5xl mx-auto w-full px-4 md:px-6 py-8 space-y-8">
           {currentPage === 'home' && <HomePage onStartExam={() => { handleNavigate('exams'); examState.startExam(); }} />}
           {currentPage === 'dashboard' && <DashboardPage />}
+          {currentPage === 'student-dashboard' && <StudentDashboardPage />}
           {currentPage === 'exams' && <ExamPage {...examState} />}
           {currentPage === 'progress' && <ProgressPage />}
           {currentPage === 'progress-overview' && <ProgressPage />}
@@ -337,6 +360,7 @@ const AppContent = () => {
           {currentPage === 'analytics' && <AnalyticsPage />}
           {currentPage === 'database' && <DatabaseStatusPage />}
           {currentPage === 'ab_testing' && <ABTestingPage />}
+          {currentPage === 'ai-test' && <AIProviderTestPage />}
         </main>
       </div>
 

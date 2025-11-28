@@ -1,14 +1,20 @@
-
+# =============================================
+# FRONTEND DOCKERFILE (OFFICE OPTIMIZED)
+# =============================================
 FROM node:22-alpine
 
 WORKDIR /app
 
-# Sadece package.json kopyalanır ve bağımlılıklar kurulur
+# Ofis ortamındaki NPM SSL problemlerini düzelt
+RUN npm config set strict-ssl false
+RUN npm config set registry http://registry.npmjs.org/
+RUN npm cache clean --force
+
+# Paket dosyalarını kopyala
 COPY package*.json ./
-RUN npm install
 
-# Kod mount edileceği için COPY gerekmez
-ENV NODE_ENV=development
+# Bağımlılıkları kur
+RUN npm install --legacy-peer-deps || npm install --force
 
-# Vite canlı sunucu
+# Kodlar docker-compose sırasında mount edilecek
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

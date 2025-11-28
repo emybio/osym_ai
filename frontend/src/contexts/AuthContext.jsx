@@ -33,11 +33,16 @@ export const AuthProvider = ({ children }) => {
   // ============================
   const getCSRFToken = async () => {
     try {
-      const res = await fetchWithTimeout(
-        "http://127.0.0.1:8000/api/v1/auth/csrf/",
-        { credentials: "include", headers: { "X-Requested-With": "XMLHttpRequest" } },
-        2000
-      );
+      // Django'nun CSRF token'ını direkt olarak al
+      const res = await fetch("http://localhost:8000/api/v1/auth/csrf/", {
+        credentials: "include",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+          "Accept": "application/json"
+        }
+      });
+
+      if (!res.ok) throw new Error("CSRF alınamadı");
 
       const contentType = res.headers.get("content-type") || "";
       if (!contentType.includes("application/json")) return null;
@@ -106,7 +111,7 @@ export const AuthProvider = ({ children }) => {
   const checkAuthStatus = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await apiCall("http://127.0.0.1:8000/api/v1/auth/check/");
+      const data = await apiCall("http://localhost:8000/api/v1/auth/check/");
 
       setUser(data.user);
       setIsAuthenticated(data.authenticated);
@@ -135,7 +140,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       setLoading(true);
-      const data = await apiCall("http://127.0.0.1:8000/api/v1/auth/login/", {
+      const data = await apiCall("http://localhost:8000/api/v1/auth/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
@@ -157,7 +162,7 @@ export const AuthProvider = ({ children }) => {
   // ============================
   const logout = async (callback) => {
     try {
-      await apiCall("http://127.0.0.1:8000/api/v1/auth/logout/", { method: "POST" });
+      await apiCall("http://localhost:8000/api/v1/auth/logout/", { method: "POST" });
     } catch (err) {
       console.warn("Logout error:", err);
     }

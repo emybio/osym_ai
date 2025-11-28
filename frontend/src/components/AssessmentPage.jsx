@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from '../api/config';
 import {
   Brain,
   Target,
@@ -76,7 +77,7 @@ const AssessmentPage = ({ onComplete, onBack }) => {
   const generateQuestions = async (subject) => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/generate-question', {
+      const response = await fetch(getApiUrl('/questions/generate/'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -437,12 +438,23 @@ const AssessmentPage = ({ onComplete, onBack }) => {
 
   if (currentStep === 'results') {
     const subjectColor = subjects.find(s => s.id === selectedSubject)?.color || 'blue';
+    const colorMap = {
+      'blue': 'bg-blue-100 text-blue-700',
+      'green': 'bg-green-100 text-green-700',
+      'red': 'bg-red-100 text-red-700',
+      'yellow': 'bg-yellow-100 text-yellow-700',
+      'purple': 'bg-purple-100 text-purple-700',
+      'indigo': 'bg-indigo-100 text-indigo-700',
+      'pink': 'bg-pink-100 text-pink-700',
+      'orange': 'bg-orange-100 text-orange-700'
+    };
+    const subjectColorClass = colorMap[subjectColor] || colorMap.blue;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
         <div className="max-w-4xl w-full">
           <div className="text-center mb-12">
-            <div className={`inline-flex items-center gap-2 bg-${subjectColor}-100 text-${subjectColor}-700 px-4 py-2 rounded-full text-sm font-medium mb-6`}>
+            <div className={`inline-flex items-center gap-2 ${subjectColorClass} px-4 py-2 rounded-full text-sm font-medium mb-6`}>
               <Award className="w-4 h-4" />
               Test Tamamlandı!
             </div>

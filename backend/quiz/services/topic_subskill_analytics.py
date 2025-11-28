@@ -2,9 +2,10 @@ import os
 import sys
 import django
 from typing import Dict, List, Any, Tuple
-from datetime import datetime, timedelta
+from datetime import timedelta
 from collections import defaultdict, Counter
 import json
+import random
 
 # Django'ı ayarla
 sys.path.append('/mnt/c/Users/kur06/Downloads/osym_ai/backend')
@@ -61,7 +62,7 @@ class TopicSubskillAnalytics:
 
             return {
                 "kullanici_id": kullanici_id,
-                "analiz_tarihi": datetime.now().isoformat(),
+                "analiz_tarihi": django.utils.timezone.now().isoformat(),
                 "test_sayisi": len(test_sonuclari),
                 "toplam_soru": self._toplam_soru_sayisi(test_sonuclari),
                 "genel_basari": self._genel_basari_hesapla(test_sonuclari),

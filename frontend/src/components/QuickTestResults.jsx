@@ -3,6 +3,8 @@ import { Trophy, Target, BookOpen, TrendingUp, CheckCircle, XCircle, Star, Chevr
 import AnimatedTransition from './AnimatedTransition';
 
 const QuickTestResults = ({ resultData, onStartNewTest, onCreateAccount }) => {
+  console.log('🔍 QuickTestResults - resultData:', resultData);
+
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
@@ -15,6 +17,13 @@ const QuickTestResults = ({ resultData, onStartNewTest, onCreateAccount }) => {
   const correctCount = resultData.correct_count || 0;
   const totalCount = resultData.total_questions || 0;
   const subjectBreakdown = resultData.subject_breakdown || {};
+
+  console.log('🔍 QuickTestResults - Parsed data:', {
+    percentage,
+    correctCount,
+    totalCount,
+    subjectBreakdown
+  });
 
   // Performance message
   const getPerformanceMessage = () => {

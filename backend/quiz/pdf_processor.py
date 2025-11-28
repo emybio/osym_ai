@@ -8,9 +8,10 @@ from typing import Dict, List, Any
 from django.conf import settings
 from django.utils import timezone
 from langchain_community.document_loaders import PyPDFLoader
-# Claude entegrasyonu - OpenAI olmadan
-# from langchain_openai import OpenAIEmbeddings
-# from langchain_community.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import Chroma
+
+from .pdf_processor_claude import analyze_curriculum_content
 
 from .models import PDFDocument, Subject, Topic, PastQuestion
 
